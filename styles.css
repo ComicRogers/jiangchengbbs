@@ -1,0 +1,1659 @@
+/* ============================================================
+ * 江城市家居装修论坛 · 完整存档样式
+ * ============================================================ */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body {
+  font-family: "Noto Sans SC", -apple-system, sans-serif;
+  color: #2c2825;
+  background: #f5f1ea;
+  line-height: 1.85;
+  font-size: 15.5px;
+  letter-spacing: 0.012em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  margin: 0;
+}
+@media (min-width: 768px) { body { font-size: 16px; } }
+
+body::before {
+  content: "";
+  position: fixed; inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(184,151,90,0.025), transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(184,151,90,0.02), transparent 50%);
+  z-index: 0;
+}
+
+/* 阅读进度条 */
+.progress-bar {
+  position: fixed; top: 0; left: 0;
+  height: 1.5px; width: 0%;
+  background: linear-gradient(to right, #b8975a, #c9a96e);
+  z-index: 100;
+  transition: width 0.1s linear;
+}
+
+/* 头部 */
+.forum-mast {
+  border-bottom: 1px solid #e5dfd2;
+  background: rgba(245, 241, 234, 0.96);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  position: sticky; top: 0; z-index: 40;
+}
+.forum-mast .inner {
+  max-width: 64rem;
+  margin: 0 auto;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.forum-mast .brand { display: flex; align-items: center; gap: 10px; min-width: 0; color: inherit; text-decoration: none; }
+.forum-mast .logo {
+  width: 32px; height: 32px;
+  border-radius: 3px;
+  background: #2c2825;
+  color: #f5f1ea;
+  display: flex; align-items: center; justify-content: center;
+  font-family: "Noto Serif SC", serif;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.forum-mast .label { font-size: 10px; letter-spacing: 0.18em; color: #8a8278; text-transform: uppercase; }
+.forum-mast .title { font-family: "Noto Serif SC", serif; font-weight: 600; color: #2c2825; font-size: 15px; line-height: 1.2; }
+
+.main-nav { display: none; gap: 4px; }
+@media (min-width: 768px) { .main-nav { display: flex; align-items: center; } }
+.main-nav a {
+  color: #5a554d;
+  font-size: 0.88em;
+  padding: 4px 10px;
+  border-radius: 3px;
+  text-decoration: none;
+  transition: all 0.25s;
+}
+.main-nav a:hover { color: #2c2825; background: rgba(184, 151, 90, 0.08); }
+.main-nav a.active { color: #8a6f3a; background: rgba(184, 151, 90, 0.1); }
+
+.user-area { display: flex; align-items: center; gap: 8px; }
+.user-area a { color: #5a554d; font-size: 12px; text-decoration: none; white-space: nowrap; }
+.user-area a:hover { color: #2c2825; }
+.user-area .sep { color: #8a8278; font-size: 12px; }
+
+/* 主体 */
+.container {
+  max-width: 64rem;
+  margin: 0 auto;
+  padding: 24px 16px 64px;
+  position: relative;
+  z-index: 1;
+}
+@media (min-width: 640px) { .container { padding-left: 20px; padding-right: 20px; } }
+
+/* 面包屑 */
+.breadcrumb {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.78em;
+  color: #8a8278;
+  margin-bottom: 0.6em;
+}
+.breadcrumb a { color: #8a8278; transition: color 0.2s; text-decoration: none; }
+.breadcrumb a:hover { color: #8a6f3a; }
+.breadcrumb .sep { margin: 0 0.4em; color: #c4baa0; }
+.breadcrumb .current { color: #5a554d; }
+
+/* 版块标题 */
+.forum-header { margin-bottom: 28px; }
+.forum-header h1 {
+  font-family: "Noto Serif SC", serif;
+  font-size: 1.7em;
+  font-weight: 600;
+  color: #2c2825;
+  line-height: 1.2;
+  letter-spacing: -0.005em;
+  margin: 0 0 4px 0;
+}
+@media (min-width: 640px) { .forum-header h1 { font-size: 2em; } }
+.forum-header .sub {
+  font-size: 0.92em;
+  color: #5a554d;
+  margin: 4px 0 0 0;
+}
+.forum-header .archive-tag {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 3px 10px;
+  background: #ece8df;
+  color: #6b665e;
+  border: 1px solid #d8d0bd;
+  border-radius: 2px;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.72em;
+  letter-spacing: 0.06em;
+}
+
+/* 顶部 disclaimer */
+.top-disclaimer {
+  margin: 18px 0 26px;
+  padding: 1em 1.2em;
+  background: #fdfaf3;
+  border: 1px solid #e5dfd2;
+  border-left: 3px solid #d4c8ad;
+  border-radius: 4px;
+  font-family: "Noto Serif SC", serif;
+  font-style: italic;
+  color: #6b665e;
+  line-height: 1.85;
+  font-size: 0.92em;
+}
+.top-disclaimer p { margin: 0.2em 0; }
+.top-disclaimer .last-line {
+  color: #8a8278;
+  transition: color 0.6s;
+  cursor: pointer;
+}
+.top-disclaimer .last-line:hover { color: #2c2825; }
+
+/* 帖子标题 / 目录 */
+.toc {
+  background: #fdfaf3;
+  border: 1px solid #e5dfd2;
+  border-radius: 6px;
+  margin-bottom: 28px;
+  overflow: hidden;
+}
+.toc-head {
+  background: linear-gradient(180deg, #f1eadc, #ebe2cd);
+  border-bottom: 1px solid #d8d0bd;
+  padding: 0.7em 1.1em;
+  font-family: "Noto Serif SC", serif;
+  font-weight: 600;
+  font-size: 0.95em;
+  color: #2c2825;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.toc-head .meta {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.72em;
+  color: #8a8278;
+  font-weight: 400;
+}
+.toc ol {
+  list-style: none;
+  margin: 0; padding: 0;
+  counter-reset: toc;
+}
+.toc li {
+  counter-increment: toc;
+  padding: 0.55em 1.1em;
+  border-top: 1px solid #ece5d5;
+  display: flex;
+  align-items: baseline;
+  gap: 0.7em;
+  font-size: 0.9em;
+}
+.toc li:first-child { border-top: 0; }
+.toc li::before {
+  content: counter(toc, decimal-leading-zero);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.78em;
+  color: #a39a8a;
+  flex-shrink: 0;
+}
+.toc li a {
+  color: #2c2825;
+  font-family: "Noto Serif SC", serif;
+  text-decoration: none;
+  transition: color 0.2s;
+  flex: 1;
+}
+.toc li a:hover { color: #8a6f3a; }
+.toc li .by {
+  font-size: 0.82em;
+  color: #8a8278;
+  font-family: "Noto Sans SC", sans-serif;
+}
+
+/* 帖子卡片 */
+.thread-card {
+  background: #fdfaf3;
+  border: 1px solid #e5dfd2;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(44, 40, 37, 0.025);
+  transition: box-shadow 0.4s ease;
+  margin-bottom: 36px;
+  scroll-margin-top: 80px;
+}
+.thread-card:hover { box-shadow: 0 2px 14px rgba(44, 40, 37, 0.045); }
+
+.thread-head {
+  background: linear-gradient(180deg, #f1eadc, #ebe2cd);
+  border-bottom: 1px solid #d8d0bd;
+  padding: 1em 1.2em;
+}
+.thread-head h2 {
+  font-family: "Noto Serif SC", serif;
+  font-weight: 600;
+  font-size: 1.18em;
+  color: #2c2825;
+  line-height: 1.4;
+  margin: 0 0 0.3em 0;
+}
+@media (min-width: 640px) { .thread-head h2 { font-size: 1.28em; } }
+.thread-head .meta {
+  font-size: 0.8em;
+  color: #8a8278;
+  font-family: "IBM Plex Mono", monospace;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3em 1em;
+}
+.thread-head .meta .author { color: #5a554d; }
+.thread-head .meta .author.is-op { color: #8a6f3a; }
+.thread-head .meta .author.is-mod { color: #5a7388; }
+.thread-head .meta .author.is-system { color: #2c2825; }
+
+/* 标签 */
+.badge {
+  display: inline-block;
+  padding: 1.5px 7px;
+  font-size: 0.7em;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  border-radius: 2px;
+  vertical-align: 2px;
+  margin-right: 5px;
+  font-family: "Noto Sans SC", sans-serif;
+}
+.badge-top { background: #f4e6d8; color: #c47b54; border: 1px solid #e8cfb4; }
+.badge-fine { background: #f1eadc; color: #8a6f3a; border: 1px solid #ddd0b0; }
+.badge-locked { background: #ece8df; color: #6b665e; border: 1px solid #d8d0bd; }
+.badge-hot { background: #f4e1d8; color: #b85a3c; border: 1px solid #e8c2b0; }
+.badge-verified {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 6px;
+  font-size: 0.7em;
+  color: #5a7388;
+  background: #e8eef3;
+  border: 1px solid #c8d6e1;
+  border-radius: 2px;
+  letter-spacing: 0.04em;
+  vertical-align: 1px;
+}
+
+/* 楼层 */
+.reply {
+  border-top: 1px solid #ece5d5;
+  padding: 1.05em 1.2em;
+  transition: background 0.6s ease;
+  position: relative;
+}
+.reply.op-post { border-top: 0; padding-top: 1.4em; }
+.reply:hover { background: rgba(232, 220, 195, 0.1); }
+
+.reply-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7em;
+  margin-bottom: 0.6em;
+}
+.avatar {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #d8d0bd, #c4baa0);
+  color: #5a554d;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Noto Serif SC", serif;
+  font-weight: 600;
+  font-size: 0.95em;
+  flex-shrink: 0;
+  user-select: none;
+  margin-top: 1px;
+}
+.avatar-mod {
+  background: linear-gradient(135deg, #b9c5d1, #8ea5b9);
+  color: #fff;
+  position: relative;
+}
+.avatar-mod::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  border: 1px solid rgba(90, 115, 136, 0.18);
+  animation: ring-breathe 6s ease-in-out infinite;
+}
+@keyframes ring-breathe {
+  0%, 100% { transform: scale(1); opacity: 0.4; }
+  50% { transform: scale(1.05); opacity: 0.1; }
+}
+.avatar-op { background: linear-gradient(135deg, #d4b88a, #b8975a); color: #fff; }
+.avatar-system { background: #2c2825; color: #f5f1ea; font-size: 0.65em; }
+.avatar-property { background: linear-gradient(135deg, #c0c8b8, #95a085); color: #fff; }
+.avatar-corrupt {
+  background: #1a1815;
+  color: #5a554d;
+}
+
+.reply-meta {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.86em;
+  line-height: 1.4;
+}
+.reply-meta .row1 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.3em 0.7em;
+}
+.username {
+  color: #2c2825;
+  font-weight: 500;
+  font-size: 0.98em;
+}
+.username.is-op { color: #8a6f3a; }
+.username.is-mod { color: #5a7388; font-weight: 500; }
+.username.is-system { color: #2c2825; font-family: "IBM Plex Mono", monospace; font-size: 0.92em; letter-spacing: 0.02em; }
+
+.timestamp {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.82em;
+  color: #8a8278;
+  letter-spacing: 0.015em;
+}
+.floor-num {
+  font-family: "IBM Plex Mono", monospace;
+  color: #8a8278;
+  font-weight: 500;
+  font-size: 0.85em;
+  letter-spacing: 0.02em;
+}
+
+.post-body {
+  margin-left: calc(34px + 0.7em);
+  font-size: 0.97em;
+  color: #2c2825;
+}
+@media (max-width: 640px) {
+  .post-body { margin-left: 0; }
+}
+.post-body p { margin: 0.55em 0; }
+.post-body p:first-child { margin-top: 0; }
+.post-body p:last-child { margin-bottom: 0; }
+
+strong { color: #2c2825; font-weight: 600; }
+del { color: #a39a8a; }
+em { color: #5a554d; }
+
+/* 引用块 */
+blockquote.q {
+  margin: 1em 0;
+  padding: 0.6em 1.1em;
+  border-left: 2.5px solid #d4c8ad;
+  background: rgba(232, 220, 195, 0.18);
+  color: #5a554d;
+  font-style: italic;
+  border-radius: 2px;
+  animation: q-breathe 8s ease-in-out infinite;
+}
+@keyframes q-breathe {
+  0%, 100% { background: rgba(232, 220, 195, 0.18); }
+  50% { background: rgba(232, 220, 195, 0.26); }
+}
+
+/* @提及 */
+.mention {
+  color: #5a7388;
+  cursor: pointer;
+  text-decoration: none;
+  border-bottom: 1px dotted rgba(90, 115, 136, 0.35);
+  transition: all 0.2s;
+}
+.mention:hover { color: #3a5168; border-bottom-color: #3a5168; }
+
+/* 图片占位符 */
+.img-placeholder {
+  display: inline-block;
+  margin: 0.4em 0.3em 0.4em 0;
+  padding: 0.55em 0.95em;
+  background: #f0eadd;
+  border: 1px dashed #d4c8ad;
+  color: #8a8278;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.78em;
+  border-radius: 3px;
+  letter-spacing: 0.02em;
+}
+
+/* 旁白文字（楼主沉默了11小时） */
+.narrator {
+  text-align: center;
+  font-style: italic;
+  color: #8a8278;
+  padding: 1.2em 1em;
+  font-family: "Noto Serif SC", serif;
+  font-size: 0.88em;
+  border-top: 1px dashed #d4c8ad;
+  border-bottom: 1px dashed #d4c8ad;
+  margin: 0;
+  background: rgba(232, 220, 195, 0.08);
+}
+
+/* 圆圈ID */
+.id-circle {
+  color: #2c2825;
+  letter-spacing: 0.03em;
+  animation: dot-pulse 3s ease-in-out infinite;
+}
+@keyframes dot-pulse {
+  0%, 100% { opacity: 0.85; }
+  50% { opacity: 1; }
+}
+
+/* 视频描述块 */
+.video-desc {
+  margin: 1em 0;
+  padding: 1em 1.2em;
+  background: #f0eadd;
+  border: 1px solid #d4c8ad;
+  border-radius: 3px;
+  font-family: "Noto Serif SC", serif;
+  font-style: italic;
+  color: #5a554d;
+  line-height: 1.9;
+  font-size: 0.94em;
+}
+.video-desc .head {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.78em;
+  color: #8a8278;
+  font-style: normal;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.6em;
+  padding-bottom: 0.4em;
+  border-bottom: 1px dashed #d4c8ad;
+}
+.video-desc p { margin: 0.45em 0; }
+
+/* 实时回复 */
+.realtime-feed {
+  background: #2c2825;
+  color: #d8d0bd;
+  border-radius: 4px;
+  margin: 0.5em 0 0;
+  padding: 0;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.82em;
+}
+.realtime-feed .header {
+  background: #1a1815;
+  padding: 0.5em 1em;
+  font-size: 0.86em;
+  color: #b8975a;
+  letter-spacing: 0.06em;
+  border-radius: 4px 4px 0 0;
+}
+.realtime-feed .item {
+  padding: 0.5em 1em;
+  border-top: 1px solid rgba(216, 208, 189, 0.08);
+  display: flex;
+  gap: 0.7em;
+  align-items: baseline;
+}
+.realtime-feed .item:first-of-type { border-top: 0; }
+.realtime-feed .item .ts {
+  color: #8a8278;
+  font-size: 0.86em;
+  flex-shrink: 0;
+}
+.realtime-feed .item .who { color: #c9a96e; font-size: 0.86em; flex-shrink: 0; }
+.realtime-feed .item .who.dots { color: #d8d0bd; }
+.realtime-feed .item .text { color: #d8d0bd; flex: 1; }
+.realtime-feed .item.complete .text { color: #5a554d; letter-spacing: 0.05em; }
+.realtime-feed .more {
+  padding: 0.6em 1em;
+  text-align: center;
+  color: #5a554d;
+  font-style: italic;
+  border-top: 1px solid rgba(216, 208, 189, 0.08);
+  font-size: 0.82em;
+}
+
+/* 系统通知 */
+.system-notice {
+  background: linear-gradient(180deg, #fdfaf3, #f5f1ea);
+  border: 1px solid #d8d0bd;
+  border-radius: 6px;
+  padding: 1.6em 1.4em;
+  transition: all 1.8s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center center;
+}
+.system-notice.contracting {
+  letter-spacing: -0.02em;
+  transform: scaleX(0.94);
+}
+.system-stats {
+  margin: 0.8em 0;
+  padding: 0.8em 1em;
+  background: rgba(44, 40, 37, 0.04);
+  border-left: 2px solid #b8975a;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.86em;
+  color: #5a554d;
+}
+.system-stats div { margin: 0.25em 0; }
+.system-warning {
+  margin: 1em 0;
+  padding: 0.8em 1.1em;
+  border: 1px dashed #c47b54;
+  border-radius: 3px;
+  color: #8a4a3a;
+  background: rgba(196, 123, 84, 0.06);
+  font-family: "Noto Serif SC", serif;
+  text-align: center;
+  font-size: 0.95em;
+  letter-spacing: 0.02em;
+}
+.central-dot-wrap {
+  text-align: center;
+  margin: 2em 0 0.6em;
+}
+.central-dot {
+  display: inline-block;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #2c2825;
+  transition: width 4s cubic-bezier(0.4, 0, 0.2, 1),
+              height 4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.central-dot.grown { width: 18px; height: 18px; }
+
+/* 锁帖 + 未通过审核 */
+.thread-locked-bar {
+  text-align: center;
+  padding: 1em;
+  background: #f0eadd;
+  border: 1px dashed #c4baa0;
+  border-radius: 3px;
+  color: #8a8278;
+  font-family: "Noto Serif SC", serif;
+  font-style: italic;
+  font-size: 0.92em;
+  margin-top: 1em;
+}
+
+.moderation-block {
+  border: 1px dashed #c4baa0;
+  background: #f0eadd;
+  padding: 1.1em 1.2em;
+  border-radius: 4px;
+  text-align: center;
+  color: #8a8278;
+  font-size: 0.92em;
+  cursor: pointer;
+  transition: all 0.5s ease;
+  font-family: "IBM Plex Mono", monospace;
+  letter-spacing: 0.05em;
+  margin-top: 0;
+}
+.moderation-block:hover {
+  background: #e8e0cc;
+  color: #5a554d;
+}
+.hidden-reply {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 1s ease, opacity 1.2s ease;
+}
+.hidden-reply.revealed {
+  max-height: 4000px;
+  opacity: 1;
+}
+
+/* 角落小圆点 */
+.corner-dot {
+  position: fixed;
+  right: 16px; bottom: 18px;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #2c2825;
+  opacity: 0;
+  transition: opacity 1.6s ease, transform 0.4s ease, width 0.6s, height 0.6s;
+  cursor: pointer;
+  z-index: 50;
+}
+.corner-dot.visible { opacity: 0.5; }
+.corner-dot:hover { opacity: 0.85; transform: scale(1.3); }
+.corner-dot::after {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  border: 1px solid rgba(44, 40, 37, 0);
+  animation: corner-pulse 4s ease-in-out infinite;
+}
+@keyframes corner-pulse {
+  0%, 100% { transform: scale(0.8); opacity: 0; }
+  50% { transform: scale(1.4); opacity: 0.25; }
+}
+.corner-tip {
+  position: fixed;
+  right: 32px; bottom: 14px;
+  background: #2c2825;
+  color: #f5f1ea;
+  padding: 8px 12px;
+  font-size: 0.78em;
+  border-radius: 3px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s;
+  font-family: "IBM Plex Mono", monospace;
+  z-index: 51;
+  letter-spacing: 0.02em;
+}
+.corner-tip.show { opacity: 1; }
+
+/* 章节分隔 */
+.thread-divider {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: #c4baa0;
+  margin: 2em 0;
+  user-select: none;
+}
+.thread-divider::before, .thread-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #e5dfd2;
+}
+.thread-divider span {
+  font-family: "Noto Serif SC", serif;
+  font-size: 0.82em;
+  letter-spacing: 0.3em;
+}
+
+/* 最终页脚 */
+footer.final {
+  margin-top: 60px;
+  padding: 28px 0 12px;
+  text-align: center;
+  border-top: 1px solid #e5dfd2;
+}
+footer.final .meta {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.78em;
+  color: #8a8278;
+  line-height: 1.8;
+}
+footer.final .meta .small { font-size: 0.85em; opacity: 0.6; }
+
+::selection { background: rgba(184, 151, 90, 0.28); color: #2c2825; }
+a { color: inherit; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* 折叠/展开按钮 */
+.thread-foldbar {
+  text-align: center;
+  padding: 0.8em;
+  background: rgba(232, 220, 195, 0.18);
+  border-top: 1px solid #ece5d5;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.8em;
+  color: #8a8278;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.thread-foldbar:hover { background: rgba(232, 220, 195, 0.4); color: #5a554d; }
+
+/* ============================================================
+ * 多页面拆分新增样式
+ * ============================================================ */
+
+/* 论坛首页 · 版块分组 */
+.section-group {
+  background: #fdfaf3;
+  border: 1px solid #e5dfd2;
+  border-radius: 6px;
+  margin-bottom: 22px;
+  overflow: hidden;
+}
+.section-group .group-head {
+  background: linear-gradient(180deg, #f1eadc, #ebe2cd);
+  border-bottom: 1px solid #d8d0bd;
+  padding: 0.7em 1.1em;
+  font-family: "Noto Serif SC", serif;
+  font-weight: 600;
+  font-size: 0.98em;
+  color: #2c2825;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.section-group .group-head .small {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.72em;
+  color: #8a8278;
+  font-weight: 400;
+}
+
+.board-row {
+  display: grid;
+  grid-template-columns: 44px 1fr 96px 152px;
+  gap: 14px;
+  align-items: center;
+  padding: 0.85em 1.1em;
+  border-top: 1px solid #ece5d5;
+}
+.board-row:first-child { border-top: 0; }
+.board-row:hover { background: rgba(232, 220, 195, 0.18); }
+@media (max-width: 640px) {
+  .board-row {
+    grid-template-columns: 38px 1fr;
+    grid-template-rows: auto auto;
+    row-gap: 6px;
+    column-gap: 12px;
+  }
+  .board-row .board-stats,
+  .board-row .board-last { grid-column: 2 / 3; }
+}
+
+.board-icon {
+  width: 44px; height: 44px;
+  border-radius: 4px;
+  background: linear-gradient(135deg, #d4b88a, #b8975a);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Noto Serif SC", serif;
+  font-size: 1.1em;
+  font-weight: 600;
+  flex-shrink: 0;
+  user-select: none;
+}
+.board-icon.muted { background: linear-gradient(135deg, #c4baa0, #a8a08e); }
+.board-icon.special { background: #2c2825; color: #f5f1ea; }
+.board-icon.dim { background: linear-gradient(135deg, #c8c8c0, #a8a8a0); }
+
+.board-info .board-title {
+  font-family: "Noto Serif SC", serif;
+  font-weight: 600;
+  font-size: 1.02em;
+  color: #2c2825;
+  text-decoration: none;
+  display: inline-block;
+}
+.board-info .board-title:hover { color: #8a6f3a; }
+.board-info .board-title.special { color: #8a6f3a; }
+.board-info .board-desc {
+  font-size: 0.82em;
+  color: #8a8278;
+  margin-top: 2px;
+  line-height: 1.5;
+}
+.board-info .board-tags {
+  margin-top: 4px;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.72em;
+  color: #a39a8a;
+}
+.board-stats {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.78em;
+  color: #8a8278;
+  text-align: right;
+  line-height: 1.55;
+}
+.board-stats .num { color: #5a554d; font-weight: 500; }
+.board-last {
+  font-size: 0.78em;
+  color: #8a8278;
+  line-height: 1.5;
+}
+.board-last .post {
+  color: #5a554d;
+  font-family: "Noto Serif SC", serif;
+  display: block;
+  font-size: 0.96em;
+  margin-bottom: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.board-last .post a { color: inherit; text-decoration: none; }
+.board-last .post a:hover { color: #8a6f3a; }
+.board-last .ts { font-family: "IBM Plex Mono", monospace; font-size: 0.86em; }
+
+/* 站点公告条 */
+.site-notice {
+  background: #fdfaf3;
+  border: 1px solid #e5dfd2;
+  border-left: 3px solid #b8975a;
+  border-radius: 4px;
+  padding: 0.9em 1.1em;
+  font-size: 0.9em;
+  color: #5a554d;
+  margin-bottom: 22px;
+  line-height: 1.75;
+}
+.site-notice strong { color: #8a6f3a; }
+.site-notice .lbl {
+  display: inline-block;
+  background: #b8975a;
+  color: #fff;
+  padding: 1px 8px;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.78em;
+  letter-spacing: 0.08em;
+  border-radius: 2px;
+  margin-right: 8px;
+}
+
+/* 板块说明卡 */
+.board-intro {
+  background: #fdfaf3;
+  border: 1px solid #e5dfd2;
+  border-radius: 6px;
+  padding: 1em 1.2em;
+  margin-bottom: 22px;
+  font-size: 0.9em;
+  color: #5a554d;
+  line-height: 1.8;
+}
+.board-intro .row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 18px;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.78em;
+  color: #8a8278;
+  margin-top: 0.55em;
+  padding-top: 0.55em;
+  border-top: 1px dashed #e5dfd2;
+}
+.board-intro .row span strong { color: #5a554d; font-weight: 500; }
+
+/* 板块功能条 */
+.board-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.board-toolbar .btn {
+  font-family: "Noto Serif SC", serif;
+  background: #2c2825;
+  color: #f5f1ea;
+  padding: 0.45em 1.1em;
+  border-radius: 3px;
+  font-size: 0.88em;
+  text-decoration: none;
+  transition: background 0.25s;
+  border: 0;
+  cursor: pointer;
+}
+.board-toolbar .btn:hover { background: #1a1815; }
+.board-toolbar .filters {
+  display: flex;
+  gap: 4px;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.8em;
+}
+.board-toolbar .filters a {
+  color: #8a8278;
+  padding: 4px 10px;
+  border-radius: 3px;
+  text-decoration: none;
+}
+.board-toolbar .filters a:hover { color: #2c2825; background: rgba(184, 151, 90, 0.08); }
+.board-toolbar .filters a.active { color: #8a6f3a; background: rgba(184, 151, 90, 0.12); }
+
+/* 帖子列表（版块页） */
+.thread-list {
+  background: #fdfaf3;
+  border: 1px solid #e5dfd2;
+  border-radius: 6px;
+  overflow: hidden;
+}
+.thread-list .list-head {
+  background: linear-gradient(180deg, #f1eadc, #ebe2cd);
+  border-bottom: 1px solid #d8d0bd;
+  padding: 0.6em 1.1em;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.74em;
+  letter-spacing: 0.08em;
+  color: #8a8278;
+  text-transform: uppercase;
+  display: grid;
+  grid-template-columns: 1fr 84px 84px 140px;
+  gap: 12px;
+  align-items: center;
+}
+@media (max-width: 768px) {
+  .thread-list .list-head { display: none; }
+}
+.thread-row {
+  display: grid;
+  grid-template-columns: 1fr 84px 84px 140px;
+  gap: 12px;
+  align-items: center;
+  padding: 0.85em 1.1em;
+  border-top: 1px solid #ece5d5;
+  transition: background 0.25s;
+}
+.thread-row:hover { background: rgba(232, 220, 195, 0.18); }
+@media (max-width: 768px) {
+  .thread-row {
+    grid-template-columns: 1fr;
+    gap: 6px;
+    padding: 0.9em 1.1em;
+  }
+}
+
+.thread-row .tr-main {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+.thread-row .tr-title {
+  font-family: "Noto Serif SC", serif;
+  font-weight: 500;
+  font-size: 1em;
+  color: #2c2825;
+  text-decoration: none;
+  line-height: 1.45;
+}
+.thread-row .tr-title:hover { color: #8a6f3a; }
+.thread-row .tr-author {
+  font-size: 0.82em;
+  color: #8a8278;
+  display: block;
+  width: 100%;
+  margin-top: 2px;
+}
+.thread-row .tr-author .by-mod { color: #5a7388; }
+.thread-row .tr-author .by-op { color: #8a6f3a; }
+.thread-row .tr-author .by-system { color: #2c2825; font-family: "IBM Plex Mono", monospace; font-size: 0.94em; }
+
+.thread-row .tr-stat {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.82em;
+  color: #8a8278;
+  text-align: center;
+}
+.thread-row .tr-stat .n { color: #5a554d; font-weight: 500; display: block; }
+.thread-row .tr-stat .lbl { font-size: 0.78em; opacity: 0.7; }
+@media (max-width: 768px) {
+  .thread-row .tr-stat {
+    text-align: left;
+    display: inline-block;
+    margin-right: 14px;
+  }
+  .thread-row .tr-stat .n,
+  .thread-row .tr-stat .lbl { display: inline; }
+  .thread-row .tr-stat .lbl::before { content: " "; }
+  .thread-row .tr-last { font-size: 0.78em; }
+}
+.thread-row .tr-last {
+  font-size: 0.78em;
+  color: #8a8278;
+  line-height: 1.5;
+  min-width: 0;
+}
+.thread-row .tr-last .who {
+  color: #5a554d;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.thread-row .tr-last .ts { font-family: "IBM Plex Mono", monospace; font-size: 0.92em; }
+
+/* 分页 */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  margin-top: 24px;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.84em;
+}
+.pagination a, .pagination span {
+  padding: 5px 11px;
+  border: 1px solid #e5dfd2;
+  background: #fdfaf3;
+  color: #5a554d;
+  text-decoration: none;
+  border-radius: 3px;
+  min-width: 32px;
+  text-align: center;
+}
+.pagination a:hover { background: rgba(184, 151, 90, 0.12); color: #2c2825; border-color: #d4c8ad; }
+.pagination .current {
+  background: #2c2825;
+  color: #f5f1ea;
+  border-color: #2c2825;
+}
+.pagination .disabled { color: #c4baa0; cursor: not-allowed; }
+
+/* 帖内翻页导航 */
+.thread-nav {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 12px;
+  margin-top: 36px;
+  padding: 16px 0;
+  border-top: 1px solid #e5dfd2;
+  border-bottom: 1px solid #e5dfd2;
+}
+.thread-nav .nav-link {
+  text-decoration: none;
+  color: #5a554d;
+  font-size: 0.86em;
+  line-height: 1.5;
+  display: block;
+  min-width: 0;
+}
+.thread-nav .nav-link.prev { text-align: left; }
+.thread-nav .nav-link.next { text-align: right; }
+.thread-nav .nav-link.up { text-align: center; align-self: center; }
+.thread-nav .nav-link:hover .title { color: #8a6f3a; }
+.thread-nav .nav-link .dir {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.72em;
+  letter-spacing: 0.1em;
+  color: #8a8278;
+  text-transform: uppercase;
+  display: block;
+}
+.thread-nav .nav-link .title {
+  font-family: "Noto Serif SC", serif;
+  color: #2c2825;
+  display: block;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.thread-nav .nav-link.up .title { color: #5a554d; }
+.thread-nav .nav-link.disabled { opacity: 0.4; pointer-events: none; }
+@media (max-width: 640px) {
+  .thread-nav {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .thread-nav .nav-link.up,
+  .thread-nav .nav-link.prev,
+  .thread-nav .nav-link.next { text-align: left; }
+}
+
+/* 回复框（占位） */
+.reply-box {
+  background: #fdfaf3;
+  border: 1px solid #e5dfd2;
+  border-radius: 6px;
+  padding: 1em 1.2em;
+  margin-top: 28px;
+  color: #8a8278;
+  font-size: 0.88em;
+  line-height: 1.7;
+}
+.reply-box .lbl {
+  font-family: "Noto Serif SC", serif;
+  font-weight: 600;
+  color: #2c2825;
+  margin-bottom: 0.4em;
+}
+.reply-box .pseudo-input {
+  margin-top: 0.6em;
+  background: #f5f1ea;
+  border: 1px dashed #d4c8ad;
+  border-radius: 3px;
+  padding: 0.9em 1em;
+  color: #a39a8a;
+  font-style: italic;
+  min-height: 60px;
+}
+.reply-box .actions {
+  margin-top: 0.7em;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.reply-box .actions button {
+  background: #c4baa0;
+  color: #fff;
+  border: 0;
+  padding: 6px 14px;
+  font-family: "Noto Serif SC", serif;
+  font-size: 0.86em;
+  border-radius: 3px;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+.reply-box .actions .hint {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.76em;
+  color: #a39a8a;
+}
+
+/* 主题元信息（帖子页头部下） */
+.thread-meta-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 18px;
+  font-size: 0.84em;
+  color: #8a8278;
+}
+.thread-meta-bar .ops {
+  display: flex;
+  gap: 4px;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.94em;
+}
+.thread-meta-bar .ops a {
+  color: #8a8278;
+  padding: 3px 9px;
+  border-radius: 3px;
+  text-decoration: none;
+  border: 1px solid transparent;
+}
+.thread-meta-bar .ops a:hover {
+  color: #2c2825;
+  border-color: #d4c8ad;
+  background: #fdfaf3;
+}
+.thread-meta-bar .stat {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.94em;
+}
+
+/* ============================================================
+ * 手机端优化（追加段）
+ * 仅通过媒体查询覆盖与补充，不影响桌面端表现
+ * ============================================================ */
+
+/* ---------- 全局兜底：长串符号/中文不撑破布局 ---------- */
+.post-body,
+.reply,
+.realtime-feed,
+.system-stats,
+.thread-row .tr-main,
+.video-desc,
+.board-info,
+.board-last {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* 帖内图片自适应（兜底，即使 HTML 没有 inline style 也安全） */
+.post-body img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 3px;
+  display: block;
+  margin: 0.7em 0;
+}
+
+/* 全局触摸优化 */
+html { -webkit-tap-highlight-color: transparent; text-size-adjust: 100%; }
+a, button, .moderation-block, .corner-dot {
+  -webkit-tap-highlight-color: rgba(184, 151, 90, 0.18);
+}
+
+/* hidden-reply 放大上限，防止手机长内容被切 */
+.hidden-reply.revealed { max-height: 12000px; }
+
+/* ============================================================
+ * 主要断点 ≤ 640px
+ * ============================================================ */
+@media (max-width: 640px) {
+
+  /* ---------- 基础排版 ---------- */
+  body {
+    font-size: 16px;
+    line-height: 1.8;
+  }
+  .container {
+    padding: 18px 14px calc(56px + env(safe-area-inset-bottom));
+  }
+
+  /* 进度条略加厚 */
+  .progress-bar { height: 2px; }
+
+  /* ---------- 顶部导航条 ---------- */
+  .forum-mast .inner {
+    padding: 10px 14px;
+    gap: 10px;
+  }
+  .forum-mast .logo {
+    width: 30px; height: 30px;
+    font-size: 13px;
+  }
+  .forum-mast .label {
+    font-size: 9px;
+    letter-spacing: 0.14em;
+  }
+  .forum-mast .title {
+    font-size: 14px;
+    max-width: 58vw;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .user-area a {
+    font-size: 12px;
+    padding: 6px 4px;
+    min-height: 32px;
+    display: inline-flex;
+    align-items: center;
+  }
+  .user-area .sep { font-size: 11px; }
+
+  /* ---------- 面包屑 ---------- */
+  .breadcrumb {
+    font-size: 0.76em;
+    margin-bottom: 0.7em;
+    line-height: 1.75;
+  }
+  .breadcrumb .sep { margin: 0 0.3em; }
+
+  /* ---------- 版块/帖子页大标题 ---------- */
+  .forum-header { margin-bottom: 22px; }
+  .forum-header h1 { font-size: 1.55em; }
+  .forum-header .sub { font-size: 0.9em; line-height: 1.7; }
+  .forum-header .archive-tag {
+    font-size: 0.68em;
+    padding: 3px 8px;
+  }
+
+  /* ---------- 顶部 disclaimer ---------- */
+  .top-disclaimer {
+    padding: 0.9em 1em;
+    font-size: 0.92em;
+    line-height: 1.85;
+    margin: 14px 0 22px;
+  }
+
+  /* ---------- 站点公告 ---------- */
+  .site-notice {
+    padding: 0.85em 1em;
+    font-size: 0.9em;
+    margin-bottom: 18px;
+    line-height: 1.75;
+  }
+  .site-notice .lbl {
+    margin-right: 6px;
+  }
+
+  /* ---------- 板块介绍 ---------- */
+  .board-intro {
+    padding: 0.95em 1em;
+    font-size: 0.92em;
+  }
+  .board-intro .row {
+    flex-direction: column;
+    gap: 3px;
+    font-size: 0.76em;
+  }
+
+  /* ---------- 工具栏 ---------- */
+  .board-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .board-toolbar .btn {
+    text-align: center;
+    padding: 0.7em 1.1em;
+    font-size: 0.92em;
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .board-toolbar .filters {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 2px;
+    scrollbar-width: none;
+  }
+  .board-toolbar .filters::-webkit-scrollbar { display: none; }
+  .board-toolbar .filters a {
+    flex-shrink: 0;
+    padding: 6px 12px;
+    min-height: 32px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* ---------- 主题列表（版块页） ---------- */
+  .thread-row {
+    padding: 0.95em 1em;
+  }
+  .thread-row .tr-title {
+    font-size: 1.02em;
+    line-height: 1.5;
+  }
+  .thread-row .tr-author {
+    font-size: 0.78em;
+  }
+  .thread-row .tr-stat {
+    font-size: 0.78em;
+  }
+  .thread-row .tr-last { margin-top: 2px; }
+
+  /* ---------- 帖子卡片 / 楼层 ---------- */
+  .thread-card { margin-bottom: 26px; border-radius: 5px; }
+  .thread-head { padding: 0.9em 1em; }
+  .thread-head h2 {
+    font-size: 1.1em;
+    line-height: 1.5;
+  }
+  .thread-head .meta {
+    font-size: 0.76em;
+    gap: 0.2em 0.8em;
+  }
+
+  .reply { padding: 1em 1em; }
+  .reply.op-post { padding-top: 1.2em; }
+
+  .reply-head {
+    gap: 0.6em;
+    margin-bottom: 0.55em;
+  }
+  .avatar {
+    width: 32px; height: 32px;
+    font-size: 0.9em;
+  }
+  .reply-meta { font-size: 0.84em; }
+  .reply-meta .row1 { gap: 0.25em 0.6em; }
+  .timestamp { font-size: 0.8em; }
+  .floor-num { font-size: 0.83em; }
+
+  /* ---------- 主题元信息条 ---------- */
+  .thread-meta-bar {
+    font-size: 0.82em;
+    gap: 8px;
+    margin-bottom: 14px;
+    align-items: flex-start;
+  }
+  .thread-meta-bar .ops {
+    gap: 2px;
+    flex-wrap: wrap;
+  }
+  .thread-meta-bar .ops a {
+    padding: 6px 10px;
+    min-height: 32px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* ---------- 引用块 ---------- */
+  blockquote.q {
+    padding: 0.6em 0.95em;
+    margin: 0.85em 0;
+  }
+
+  /* ---------- 视频描述块 ---------- */
+  .video-desc {
+    padding: 0.9em 1em;
+    font-size: 0.92em;
+    line-height: 1.85;
+  }
+  .video-desc .head { font-size: 0.74em; }
+
+  /* ---------- 实时回复 feed（关键） ---------- */
+  .realtime-feed { font-size: 0.78em; }
+  .realtime-feed .header {
+    font-size: 0.82em;
+    padding: 0.55em 0.9em;
+    letter-spacing: 0.04em;
+    line-height: 1.6;
+  }
+  .realtime-feed .item {
+    padding: 0.65em 0.9em;
+    flex-wrap: wrap;       /* 关键：允许换行 */
+    gap: 0.3em 0.7em;
+  }
+  .realtime-feed .item .ts { font-size: 0.82em; }
+  .realtime-feed .item .who { font-size: 0.84em; }
+  .realtime-feed .item .text {
+    flex: 1 1 100%;        /* 关键：正文换到下一行 */
+    margin-top: 3px;
+    line-height: 1.6;
+  }
+  .realtime-feed .more {
+    padding: 0.65em 0.9em;
+    font-size: 0.82em;
+  }
+
+  /* ---------- 系统通知 ---------- */
+  .system-notice { padding: 1.2em 1em; }
+  .system-stats {
+    padding: 0.75em 0.85em;
+    font-size: 0.8em;
+  }
+  .system-stats div {
+    margin: 0.35em 0;
+    line-height: 1.7;
+  }
+  .system-warning {
+    font-size: 0.92em;
+    padding: 0.8em 0.95em;
+    line-height: 1.7;
+  }
+
+  /* ---------- 帖内翻页 ---------- */
+  .thread-nav {
+    margin-top: 28px;
+    padding: 12px 0;
+    gap: 6px;
+  }
+  .thread-nav .nav-link {
+    padding: 8px 4px;
+    min-height: 44px;
+    font-size: 0.86em;
+  }
+
+  /* ---------- 回复框 ---------- */
+  .reply-box {
+    padding: 0.95em 1em;
+    margin-top: 20px;
+  }
+  .reply-box .pseudo-input {
+    min-height: 52px;
+    padding: 0.85em 0.95em;
+  }
+  .reply-box .actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 7px;
+  }
+  .reply-box .actions button {
+    padding: 9px 14px;
+    width: 100%;
+    min-height: 38px;
+  }
+  .reply-box .actions .hint { text-align: center; }
+
+  /* ---------- 分页 ---------- */
+  .pagination {
+    margin-top: 18px;
+    gap: 5px;
+  }
+  .pagination a,
+  .pagination span {
+    padding: 7px 13px;
+    min-width: 36px;
+    min-height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ---------- 锁帖条 / 审核块 ---------- */
+  .thread-locked-bar {
+    padding: 0.9em;
+    font-size: 0.88em;
+  }
+  .moderation-block {
+    padding: 1.1em 1em;
+    min-height: 56px;
+    font-size: 0.86em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: 0.04em;
+  }
+
+  /* ---------- 章节分隔 ---------- */
+  .thread-divider {
+    gap: 10px;
+    margin: 1.6em 0;
+  }
+  .thread-divider span {
+    font-size: 0.76em;
+    letter-spacing: 0.22em;
+  }
+
+  /* ---------- 页脚 ---------- */
+  footer.final {
+    margin-top: 40px;
+    padding: 22px 0 10px;
+  }
+  footer.final .meta { font-size: 0.74em; }
+
+  /* ---------- 首页板块行 ---------- */
+  .section-group .group-head {
+    padding: 0.7em 1em;
+    font-size: 0.94em;
+  }
+  .board-row {
+    padding: 0.9em 1em;
+    column-gap: 10px;
+    row-gap: 6px;
+  }
+  .board-icon {
+    width: 38px; height: 38px;
+    font-size: 1em;
+    grid-row: 1 / 2;
+  }
+  .board-info .board-title {
+    font-size: 0.98em;
+    line-height: 1.45;
+  }
+  .board-info .board-desc {
+    font-size: 0.8em;
+    line-height: 1.55;
+    margin-top: 3px;
+  }
+  .board-info .board-tags {
+    font-size: 0.7em;
+    margin-top: 4px;
+  }
+  .board-stats {
+    text-align: left;       /* 关键：手机端改回左对齐 */
+    font-size: 0.76em;
+    line-height: 1.5;
+  }
+  .board-last {
+    font-size: 0.76em;
+    line-height: 1.5;
+  }
+
+  /* ---------- 角落小圆点（iOS 安全区 + 扩大触摸区） ---------- */
+  .corner-dot {
+    right: 14px;
+    bottom: calc(14px + env(safe-area-inset-bottom));
+  }
+  .corner-dot::before {
+    content: "";
+    position: absolute;
+    inset: -16px;            /* 扩大热区，但视觉点保持 6px */
+  }
+  .corner-tip {
+    right: 30px;
+    bottom: calc(10px + env(safe-area-inset-bottom));
+    max-width: calc(100vw - 56px);
+    font-size: 0.74em;
+  }
+}
+
+/* ============================================================
+ * 极窄屏 ≤ 380px（小屏老款手机）
+ * ============================================================ */
+@media (max-width: 380px) {
+  body { font-size: 15.5px; }
+  .container {
+    padding: 14px 12px calc(48px + env(safe-area-inset-bottom));
+  }
+
+  .forum-mast .inner { padding: 9px 12px; gap: 8px; }
+  .forum-mast .logo { width: 28px; height: 28px; font-size: 12px; }
+  .forum-mast .label { display: none; }      /* 极窄屏隐藏英文 LABEL */
+  .forum-mast .title { font-size: 13.5px; max-width: 52vw; }
+  .user-area a { font-size: 11.5px; padding: 6px 3px; }
+
+  .forum-header h1 { font-size: 1.42em; }
+  .thread-head h2 { font-size: 1.05em; }
+  .thread-head, .reply { padding-left: 0.85em; padding-right: 0.85em; }
+  .reply-box { padding-left: 0.85em; padding-right: 0.85em; }
+
+  .breadcrumb { font-size: 0.72em; }
+  .top-disclaimer, .site-notice, .board-intro { padding: 0.85em 0.9em; }
+
+  .realtime-feed { font-size: 0.74em; }
+  .system-stats { font-size: 0.76em; padding: 0.65em 0.75em; }
+}
+
+/* ============================================================
+ * 横屏小高度手机（不让 sticky header 吃掉太多视野）
+ * ============================================================ */
+@media (max-width: 900px) and (max-height: 480px) and (orientation: landscape) {
+  .forum-mast .inner { padding: 6px 14px; }
+  .forum-mast .logo { width: 26px; height: 26px; font-size: 12px; }
+  .forum-mast .label { font-size: 8px; }
+  .forum-mast .title { font-size: 13px; }
+  .container { padding-top: 14px; }
+}
+
+/* ============================================================
+ * 高分屏（视网膜）下的微调
+ * ============================================================ */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  body { -webkit-font-smoothing: antialiased; }
+  .badge { letter-spacing: 0.035em; }
+}
