@@ -169,21 +169,30 @@
   }
 
   /* ============================================================
-   * 5. 系统通知收缩
+   * 5. 系统通知收缩 + 中央黑点生长（thread-9 核心氛围）
    * ============================================================ */
   var systemNotice = $('#systemNotice');
   var centralDot = $('#centralDot');
   if (systemNotice && 'IntersectionObserver' in window) {
+    var noticeTriggered = false;
     var noticeObserver = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
-        if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
-          setTimeout(function () { systemNotice.classList.add('contracting'); }, 1200);
+        if (!noticeTriggered && entry.isIntersecting && entry.intersectionRatio > 0.6) {
+          noticeTriggered = true;
+          // 1.4s 后页面文字开始横向收缩
+          setTimeout(function () {
+            systemNotice.classList.add('contracting');
+          }, 1400);
+          // 2.8s 后中央黑点切换到生长完成 + 脉动状态
           if (centralDot) {
-            setTimeout(function () { centralDot.classList.add('grown'); }, 2400);
+            setTimeout(function () {
+              centralDot.classList.add('grown');
+            }, 2800);
           }
+          noticeObserver.disconnect();
         }
       });
-    }, { threshold: [0, 0.5, 1] });
+    }, { threshold: [0.6, 1] });
     noticeObserver.observe(systemNotice);
   }
 

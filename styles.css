@@ -537,12 +537,18 @@ blockquote.q {
   border: 1px solid #d8d0bd;
   border-radius: 6px;
   padding: 1.6em 1.4em;
-  transition: all 1.8s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 2.8s cubic-bezier(0.4, 0, 0.2, 1),
+              letter-spacing 2.8s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 2.8s cubic-bezier(0.4, 0, 0.2, 1),
+              filter 2.8s cubic-bezier(0.4, 0, 0.2, 1);
   transform-origin: center center;
+  will-change: transform, letter-spacing;
 }
 .system-notice.contracting {
-  letter-spacing: -0.02em;
-  transform: scaleX(0.94);
+  letter-spacing: -0.03em;
+  transform: scaleX(0.88) scaleY(0.94);
+  opacity: 0.94;
+  filter: blur(0.2px);
 }
 .system-stats {
   margin: 0.8em 0;
@@ -569,17 +575,132 @@ blockquote.q {
 .central-dot-wrap {
   text-align: center;
   margin: 2em 0 0.6em;
+  min-height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .central-dot {
   display: inline-block;
-  width: 3px;
-  height: 3px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   background: #2c2825;
-  transition: width 4s cubic-bezier(0.4, 0, 0.2, 1),
-              height 4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 12px rgba(44, 40, 37, 0.55),
+              inset 0 0 6px rgba(0, 0, 0, 0.4);
+  opacity: 0.92;
+  will-change: width, height, box-shadow, transform;
 }
-.central-dot.grown { width: 18px; height: 18px; }
+.central-dot.grown {
+  background: #0a0908;
+  /* 先生长 2.8s（forwards 保留终态），再延迟 2.8s 开始无限脉动 */
+  animation:
+    hole-grow 2.8s cubic-bezier(0.4, 0, 0.2, 1) forwards,
+    hole-pulse 2.2s ease-in-out 2.8s infinite;
+}
+@keyframes hole-grow {
+  0% {
+    width: 18px;
+    height: 18px;
+    box-shadow: 0 0 12px rgba(44, 40, 37, 0.55),
+                inset 0 0 6px rgba(0, 0, 0, 0.4);
+  }
+  60% {
+    width: 96px;
+    height: 96px;
+    box-shadow:
+      0 0 32px rgba(0, 0, 0, 0.6),
+      0 0 60px rgba(44, 40, 37, 0.28),
+      inset 0 0 18px rgba(255, 255, 255, 0.05),
+      inset 0 0 6px rgba(0, 0, 0, 0.7);
+  }
+  100% {
+    width: 140px;
+    height: 140px;
+    box-shadow:
+      0 0 48px rgba(0, 0, 0, 0.7),
+      0 0 96px rgba(44, 40, 37, 0.35),
+      inset 0 0 32px rgba(255, 255, 255, 0.07),
+      inset 0 0 6px rgba(0, 0, 0, 0.9);
+  }
+}
+@keyframes hole-pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow:
+      0 0 48px rgba(0, 0, 0, 0.7),
+      0 0 96px rgba(44, 40, 37, 0.35),
+      inset 0 0 32px rgba(255, 255, 255, 0.07),
+      inset 0 0 6px rgba(0, 0, 0, 0.9);
+  }
+  50% {
+    transform: scale(1.08);
+    box-shadow:
+      0 0 64px rgba(0, 0, 0, 0.85),
+      0 0 130px rgba(44, 40, 37, 0.42),
+      inset 0 0 40px rgba(255, 255, 255, 0.1),
+      inset 0 0 8px rgba(0, 0, 0, 0.95);
+  }
+}
+/* 深色模式专属：用奶白色微晕替代暖灰色环 */
+@keyframes hole-grow-dark {
+  0% {
+    width: 18px;
+    height: 18px;
+    box-shadow: 0 0 14px rgba(216, 208, 189, 0.18),
+                inset 0 0 6px rgba(0, 0, 0, 0.95);
+  }
+  60% {
+    width: 96px;
+    height: 96px;
+    box-shadow:
+      0 0 40px rgba(0, 0, 0, 0.9),
+      0 0 74px rgba(216, 208, 189, 0.06),
+      inset 0 0 22px rgba(255, 255, 255, 0.04),
+      inset 0 0 8px rgba(0, 0, 0, 1);
+  }
+  100% {
+    width: 140px;
+    height: 140px;
+    box-shadow:
+      0 0 56px rgba(0, 0, 0, 0.95),
+      0 0 110px rgba(216, 208, 189, 0.10),
+      inset 0 0 36px rgba(255, 255, 255, 0.05),
+      inset 0 0 10px rgba(0, 0, 0, 1);
+  }
+}
+@keyframes hole-pulse-dark {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow:
+      0 0 56px rgba(0, 0, 0, 0.95),
+      0 0 110px rgba(216, 208, 189, 0.10),
+      inset 0 0 36px rgba(255, 255, 255, 0.05),
+      inset 0 0 10px rgba(0, 0, 0, 1);
+  }
+  50% {
+    transform: scale(1.08);
+    box-shadow:
+      0 0 76px rgba(0, 0, 0, 1),
+      0 0 150px rgba(216, 208, 189, 0.16),
+      inset 0 0 44px rgba(255, 255, 255, 0.08),
+      inset 0 0 12px rgba(0, 0, 0, 1);
+  }
+}
+/* 用户关闭动效偏好：直接呈现 140px 终态，不动 */
+@media (prefers-reduced-motion: reduce) {
+  .central-dot.grown {
+    animation: none;
+    width: 140px;
+    height: 140px;
+    transform: none;
+    box-shadow:
+      0 0 48px rgba(0, 0, 0, 0.7),
+      0 0 96px rgba(44, 40, 37, 0.35),
+      inset 0 0 32px rgba(255, 255, 255, 0.07),
+      inset 0 0 6px rgba(0, 0, 0, 0.9);
+  }
+}
 
 /* 锁帖 + 未通过审核 */
 .thread-locked-bar {
@@ -2057,7 +2178,18 @@ body:not(.immersive) .forum-mast {
     background: rgba(196, 123, 84, 0.08);
     border-color: #8a4a3a;
   }
-  body:not(.light-mode) .central-dot { background: #d8d0bd; }
+  body:not(.light-mode) .central-dot {
+    background: #000;
+    box-shadow: 0 0 14px rgba(216, 208, 189, 0.18),
+                inset 0 0 6px rgba(0, 0, 0, 0.95);
+  }
+  body:not(.light-mode) .central-dot.grown {
+    background: #000;
+    /* 深色模式下使用独立 keyframes，保留奶白色微晕 */
+    animation:
+      hole-grow-dark 2.8s cubic-bezier(0.4, 0, 0.2, 1) forwards,
+      hole-pulse-dark 2.2s ease-in-out 2.8s infinite;
+  }
 
   body:not(.light-mode) .thread-locked-bar,
   body:not(.light-mode) .moderation-block {
