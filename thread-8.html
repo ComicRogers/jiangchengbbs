@@ -9,6 +9,67 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css" />
+
+<!-- 实时回复 · 打字机效果专用样式 -->
+<style>
+  /* 初始隐藏 + 后续淡入 */
+  .realtime-feed .item.rt-pending {
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.28s ease, transform 0.28s ease;
+  }
+  .realtime-feed .item.rt-revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* 正在敲字的行尾光标 */
+  .realtime-feed .item.rt-typing .text::after {
+    content: "▌";
+    color: #c9a96e;
+    margin-left: 1px;
+    animation: rt-cursor-blink 0.6s steps(1) infinite;
+  }
+  @keyframes rt-cursor-blink {
+    0%, 50%   { opacity: 1; }
+    51%, 100% { opacity: 0; }
+  }
+
+  /* header 红色 LIVE 脉动点 */
+  .realtime-feed .header .live-pulse {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    background: #c47b54;
+    border-radius: 50%;
+    margin-right: 7px;
+    vertical-align: 1px;
+    animation: rt-live-pulse 1.2s ease-in-out infinite;
+  }
+  @keyframes rt-live-pulse {
+    0%, 100% { opacity: 1;   box-shadow: 0 0 0 0   rgba(196, 123, 84, 0.55); }
+    50%      { opacity: 0.5; box-shadow: 0 0 0 7px rgba(196, 123, 84, 0); }
+  }
+
+  /* feed 整体进入"直播"态时的微弱外发光 */
+  .realtime-feed.rt-live-mode {
+    box-shadow:
+      0 0 0 1px rgba(196, 123, 84, 0.18),
+      0 4px 24px rgba(0, 0, 0, 0.28);
+  }
+
+  /* 结尾"……页面所有内容正在被相同的字符覆盖……"行 */
+  .realtime-feed .more.rt-pending { opacity: 0; transition: opacity 1.4s ease; }
+  .realtime-feed .more.rt-revealed { opacity: 1; }
+
+  /* 尊重 prefers-reduced-motion */
+  @media (prefers-reduced-motion: reduce) {
+    .realtime-feed .item.rt-pending { opacity: 1; transform: none; transition: none; }
+    .realtime-feed .more.rt-pending { opacity: 1; transition: none; }
+    .realtime-feed .item.rt-typing .text::after { animation: none; opacity: 0; }
+    .realtime-feed .header .live-pulse { animation: none; }
+  }
+</style>
 </head>
 <body>
 
@@ -105,7 +166,7 @@
     <div class="reply" style="padding-top:1em;">
       <div style="font-family:'Noto Serif SC',serif;font-weight:500;color:#2c2825;margin-bottom:0.6em;font-size:0.95em;">【实时回复】</div>
 
-      <div class="realtime-feed">
+      <div class="realtime-feed" id="rtFeed">
         <div class="header">REAL-TIME FEED · 2026-05-10 23:33 · 每秒数十条新回复涌入</div>
 
         <div class="item">
@@ -292,5 +353,153 @@
 </main>
 
 <script src="script.js"></script>
+
+<!-- 实时回复 · 打字机播放器 -->
+<script>
+(function () {
+  'use strict';
+
+  var feed = document.getElementById('rtFeed');
+  if (!feed) return;
+
+  var items = Array.prototype.slice.call(feed.querySelectorAll('.item'));
+  var more  = feed.querySelector('.more');
+  if (!items.length) return;
+
+  /* 1. 保存原文，初始全部置为待显示 */
+  items.forEach(function (item) {
+    item.classList.add('rt-pending');
+    var textEl = item.querySelector('.text');
+    if (textEl) {
+      item.dataset.rtText = textEl.textContent;
+      textEl.textContent = '';
+    }
+  });
+  if (more) {
+    more.classList.add('rt-pending');
+    more.dataset.rtText = more.textContent;
+    more.textContent = '';
+  }
+
+  /* 2. 给 header 注入 LIVE 脉动点 */
+  var header = feed.querySelector('.header');
+  if (header && !header.querySelector('.live-pulse')) {
+    var pulse = document.createElement('span');
+    pulse.className = 'live-pulse';
+    header.insertBefore(pulse, header.firstChild);
+  }
+
+  /* 3. 滚到视野内才启动 */
+  var started = false;
+  function start() {
+    if (started) return;
+    started = true;
+    feed.classList.add('rt-live-mode');
+    playFeed();
+  }
+
+  if ('IntersectionObserver' in window) {
+    var obs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting && e.intersectionRatio > 0.12) start();
+      });
+    }, { threshold: [0, 0.12, 0.4] });
+    obs.observe(feed);
+  } else {
+    setTimeout(start, 800);
+  }
+
+  /* 4. 主循环：逐条显示 */
+  function playFeed() {
+    var idx = 0;
+    function next() {
+      if (idx >= items.length) {
+        playMore();
+        return;
+      }
+      var item = items[idx++];
+      revealItem(item, function () {
+        // 间隔时长：complete（已坍缩）的项更短，普通项稍长
+        var gap = item.classList.contains('complete')
+          ? 80 + Math.random() * 220
+          : 250 + Math.random() * 380;
+        setTimeout(next, gap);
+      });
+    }
+    next();
+  }
+
+  /* 5. 单条显示：先 fade-in，再打字 */
+  function revealItem(item, done) {
+    item.classList.remove('rt-pending');
+    item.classList.add('rt-revealed');
+
+    var textEl = item.querySelector('.text');
+    var text   = item.dataset.rtText || '';
+
+    if (!textEl || !text) {
+      setTimeout(done, 200);
+      return;
+    }
+
+    if (item.classList.contains('complete')) {
+      // "完整了" / ●●● 类目：瞬时显示（它们已经被吞没，不再"敲字"）
+      setTimeout(function () {
+        textEl.textContent = text;
+        done();
+      }, 40 + Math.random() * 80);
+    } else {
+      item.classList.add('rt-typing');
+      var baseSpeed = 38 + Math.random() * 22;
+      typeText(textEl, text, baseSpeed, function () {
+        item.classList.remove('rt-typing');
+        // 打完之后光标多停一拍再交给下一条
+        setTimeout(done, 220);
+      });
+    }
+  }
+
+  /* 6. 打字机：逐字输出，标点处稍作停顿 */
+  function typeText(el, text, speed, done) {
+    var chars = Array.from(text);
+    var i = 0;
+    function step() {
+      if (i >= chars.length) {
+        if (done) done();
+        return;
+      }
+      var ch = chars[i++];
+      el.textContent += ch;
+      // 中文标点 / 空格处轻微停顿
+      var extra = 0;
+      if (ch === '，' || ch === '。' || ch === '？' || ch === '！' ||
+          ch === '；' || ch === ' '  || ch === '　') {
+        extra = speed * 3.5;
+      } else if (ch === '●') {
+        extra = speed * 0.6;
+      }
+      setTimeout(step, speed + extra + Math.random() * speed * 0.45);
+    }
+    step();
+  }
+
+  /* 7. 末尾"……正在被相同字符覆盖……"行 */
+  function playMore() {
+    if (!more) {
+      feed.classList.remove('rt-live-mode');
+      return;
+    }
+    more.classList.remove('rt-pending');
+    more.classList.add('rt-revealed');
+    setTimeout(function () {
+      typeText(more, more.dataset.rtText, 55, function () {
+        // 整段直播结束 → 退出 live-mode（脉动停止 → 像直播信号被切断）
+        setTimeout(function () { feed.classList.remove('rt-live-mode'); }, 1200);
+      });
+    }, 700);
+  }
+})();
+</script>
+
 </body>
 </html>
