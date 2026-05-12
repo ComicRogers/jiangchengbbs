@@ -566,20 +566,132 @@ blockquote.q {
   font-size: 0.95em;
   letter-spacing: 0.02em;
 }
+
+/* ============================================================
+ * 中央黑洞 · 深不见底的版本
+ * ============================================================ */
 .central-dot-wrap {
-  text-align: center;
-  margin: 2em 0 0.6em;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 2.4em 0 1em;
+  min-height: 110px;
+  /* 极淡的中央暗化，仿佛页面被它吸引 */
+  background: radial-gradient(
+    ellipse 240px 90px at center,
+    rgba(28, 22, 16, 0.05) 0%,
+    transparent 70%
+  );
 }
+
 .central-dot {
-  display: inline-block;
-  width: 3px;
-  height: 3px;
+  position: relative;
+  display: block;
+  width: 4px;
+  height: 4px;
   border-radius: 50%;
-  background: #2c2825;
-  transition: width 4s cubic-bezier(0.4, 0, 0.2, 1),
-              height 4s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* 多停靠点径向渐变：中心纯黑→几个深度层→边缘暖灰，
+     形成"看进竖直管道"的错觉 */
+  background:
+    radial-gradient(
+      circle at 50% 44%,
+      #000 0%,
+      #000 38%,
+      #050402 56%,
+      #0e0c09 74%,
+      #25211c 92%,
+      #4a4239 100%
+    );
+
+  box-shadow:
+    /* 外圈 1px 鬼影：洞缘的壁面材质 */
+    0 0 0 1px rgba(122, 112, 96, 0.22),
+    /* 页面上的柔和外阴影：黑色向外渗 */
+    0 2px 10px -2px rgba(20, 14, 8, 0.30),
+    /* 内不对称暗角：左上深（受光侧的阴影） */
+    inset 3px 5px 9px rgba(0, 0, 0, 0.96),
+    /* 整体内暗：所有方向均匀的"管道黑" */
+    inset 0 0 14px rgba(0, 0, 0, 0.82),
+    /* 右下极弱反射暖光：暗示 3D 管道而非 2D 圆 */
+    inset -1px -2px 4px rgba(86, 76, 62, 0.18);
+
+  /* S 形缓动：慢起 → 中段加速 → 平滑沉降；5.4s 提升悬念 */
+  transition:
+    width 5.4s cubic-bezier(0.65, 0.02, 0.35, 1),
+    height 5.4s cubic-bezier(0.65, 0.02, 0.35, 1),
+    box-shadow 5.4s cubic-bezier(0.65, 0.02, 0.35, 1);
+
+  will-change: width, height;
 }
-.central-dot.grown { width: 18px; height: 18px; }
+
+/* 外圈光晕：暗化向外蔓延，仅在 .grown 状态淡入 */
+.central-dot::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 260%;
+  height: 260%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at center,
+    rgba(28, 22, 16, 0.32) 0%,
+    rgba(28, 22, 16, 0.12) 35%,
+    transparent 70%
+  );
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 4.8s ease 1.4s;
+  z-index: 0;
+}
+
+/* 管道深处的"更深的核心"——稍偏上的模糊小椭圆 */
+.central-dot::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 48%;
+  width: 32%;
+  height: 26%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0.55) 55%,
+    transparent 100%
+  );
+  pointer-events: none;
+  filter: blur(0.6px);
+  z-index: 1;
+}
+
+.central-dot.grown {
+  width: 84px;
+  height: 84px;
+  box-shadow:
+    0 0 0 1px rgba(122, 112, 96, 0.35),
+    0 10px 36px -4px rgba(20, 14, 8, 0.45),
+    inset 14px 18px 30px rgba(0, 0, 0, 0.95),
+    inset 0 0 56px rgba(0, 0, 0, 0.88),
+    inset -5px -7px 18px rgba(86, 76, 62, 0.20);
+  /* 生长完成后启动"活着"的微动作 */
+  animation: hole-alive 9s ease-in-out 5.5s infinite;
+}
+
+.central-dot.grown::before {
+  opacity: 1;
+}
+
+/* 极细微的呼吸 + 漂移：盯两秒才能发现 */
+@keyframes hole-alive {
+  0%, 100% { transform: scale(1) translateY(0); }
+  35% { transform: scale(1.025) translateY(-0.5px); }
+  68% { transform: scale(0.988) translateY(0.5px); }
+}
 
 /* 锁帖 + 未通过审核 */
 .thread-locked-bar {
@@ -1217,7 +1329,7 @@ a { color: inherit; }
   word-break: break-word;
 }
 
-/* 帖内图片自适应（兜底，即使 HTML 没有 inline style 也安全） */
+/* 帖内图片自适应 */
 .post-body img {
   max-width: 100%;
   height: auto;
@@ -1240,7 +1352,6 @@ a, button, .moderation-block, .corner-dot {
  * ============================================================ */
 @media (max-width: 640px) {
 
-  /* ---------- 基础排版 ---------- */
   body {
     font-size: 16px;
     line-height: 1.8;
@@ -1249,22 +1360,11 @@ a, button, .moderation-block, .corner-dot {
     padding: 18px 14px calc(56px + env(safe-area-inset-bottom));
   }
 
-  /* 进度条略加厚 */
   .progress-bar { height: 2px; }
 
-  /* ---------- 顶部导航条 ---------- */
-  .forum-mast .inner {
-    padding: 10px 14px;
-    gap: 10px;
-  }
-  .forum-mast .logo {
-    width: 30px; height: 30px;
-    font-size: 13px;
-  }
-  .forum-mast .label {
-    font-size: 9px;
-    letter-spacing: 0.14em;
-  }
+  .forum-mast .inner { padding: 10px 14px; gap: 10px; }
+  .forum-mast .logo { width: 30px; height: 30px; font-size: 13px; }
+  .forum-mast .label { font-size: 9px; letter-spacing: 0.14em; }
   .forum-mast .title {
     font-size: 14px;
     max-width: 58vw;
@@ -1272,358 +1372,157 @@ a, button, .moderation-block, .corner-dot {
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .user-area a {
-    font-size: 12px;
-    padding: 6px 4px;
-    min-height: 32px;
-    display: inline-flex;
-    align-items: center;
-  }
+  .user-area a { font-size: 12px; padding: 6px 4px; min-height: 32px; display: inline-flex; align-items: center; }
   .user-area .sep { font-size: 11px; }
 
-  /* ---------- 面包屑 ---------- */
-  .breadcrumb {
-    font-size: 0.76em;
-    margin-bottom: 0.7em;
-    line-height: 1.75;
-  }
+  .breadcrumb { font-size: 0.76em; margin-bottom: 0.7em; line-height: 1.75; }
   .breadcrumb .sep { margin: 0 0.3em; }
 
-  /* ---------- 版块/帖子页大标题 ---------- */
   .forum-header { margin-bottom: 22px; }
   .forum-header h1 { font-size: 1.55em; }
   .forum-header .sub { font-size: 0.9em; line-height: 1.7; }
-  .forum-header .archive-tag {
-    font-size: 0.68em;
-    padding: 3px 8px;
-  }
+  .forum-header .archive-tag { font-size: 0.68em; padding: 3px 8px; }
 
-  /* ---------- 顶部 disclaimer ---------- */
-  .top-disclaimer {
-    padding: 0.9em 1em;
-    font-size: 0.92em;
-    line-height: 1.85;
-    margin: 14px 0 22px;
-  }
+  .top-disclaimer { padding: 0.9em 1em; font-size: 0.92em; line-height: 1.85; margin: 14px 0 22px; }
 
-  /* ---------- 站点公告 ---------- */
-  .site-notice {
-    padding: 0.85em 1em;
-    font-size: 0.9em;
-    margin-bottom: 18px;
-    line-height: 1.75;
-  }
-  .site-notice .lbl {
-    margin-right: 6px;
-  }
+  .site-notice { padding: 0.85em 1em; font-size: 0.9em; margin-bottom: 18px; line-height: 1.75; }
+  .site-notice .lbl { margin-right: 6px; }
 
-  /* ---------- 板块介绍 ---------- */
-  .board-intro {
-    padding: 0.95em 1em;
-    font-size: 0.92em;
-  }
-  .board-intro .row {
-    flex-direction: column;
-    gap: 3px;
-    font-size: 0.76em;
-  }
+  .board-intro { padding: 0.95em 1em; font-size: 0.92em; }
+  .board-intro .row { flex-direction: column; gap: 3px; font-size: 0.76em; }
 
-  /* ---------- 工具栏 ---------- */
-  .board-toolbar {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
-  }
+  .board-toolbar { flex-direction: column; align-items: stretch; gap: 10px; }
   .board-toolbar .btn {
-    text-align: center;
-    padding: 0.7em 1.1em;
-    font-size: 0.92em;
-    min-height: 40px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    text-align: center; padding: 0.7em 1.1em;
+    font-size: 0.92em; min-height: 40px;
+    display: inline-flex; align-items: center; justify-content: center;
   }
   .board-toolbar .filters {
-    overflow-x: auto;
-    flex-wrap: nowrap;
+    overflow-x: auto; flex-wrap: nowrap;
     -webkit-overflow-scrolling: touch;
-    padding-bottom: 2px;
-    scrollbar-width: none;
+    padding-bottom: 2px; scrollbar-width: none;
   }
   .board-toolbar .filters::-webkit-scrollbar { display: none; }
   .board-toolbar .filters a {
-    flex-shrink: 0;
-    padding: 6px 12px;
-    min-height: 32px;
-    display: inline-flex;
-    align-items: center;
+    flex-shrink: 0; padding: 6px 12px;
+    min-height: 32px; display: inline-flex; align-items: center;
   }
 
-  /* ---------- 主题列表（版块页） ---------- */
-  .thread-row {
-    padding: 0.95em 1em;
-  }
-  .thread-row .tr-title {
-    font-size: 1.02em;
-    line-height: 1.5;
-  }
-  .thread-row .tr-author {
-    font-size: 0.78em;
-  }
-  .thread-row .tr-stat {
-    font-size: 0.78em;
-  }
+  .thread-row { padding: 0.95em 1em; }
+  .thread-row .tr-title { font-size: 1.02em; line-height: 1.5; }
+  .thread-row .tr-author { font-size: 0.78em; }
+  .thread-row .tr-stat { font-size: 0.78em; }
   .thread-row .tr-last { margin-top: 2px; }
 
-  /* ---------- 帖子卡片 / 楼层 ---------- */
   .thread-card { margin-bottom: 26px; border-radius: 5px; }
   .thread-head { padding: 0.9em 1em; }
-  .thread-head h2 {
-    font-size: 1.1em;
-    line-height: 1.5;
-  }
-  .thread-head .meta {
-    font-size: 0.76em;
-    gap: 0.2em 0.8em;
-  }
+  .thread-head h2 { font-size: 1.1em; line-height: 1.5; }
+  .thread-head .meta { font-size: 0.76em; gap: 0.2em 0.8em; }
 
   .reply { padding: 1em 1em; }
   .reply.op-post { padding-top: 1.2em; }
-
-  .reply-head {
-    gap: 0.6em;
-    margin-bottom: 0.55em;
-  }
-  .avatar {
-    width: 32px; height: 32px;
-    font-size: 0.9em;
-  }
+  .reply-head { gap: 0.6em; margin-bottom: 0.55em; }
+  .avatar { width: 32px; height: 32px; font-size: 0.9em; }
   .reply-meta { font-size: 0.84em; }
   .reply-meta .row1 { gap: 0.25em 0.6em; }
   .timestamp { font-size: 0.8em; }
   .floor-num { font-size: 0.83em; }
 
-  /* ---------- 主题元信息条 ---------- */
-  .thread-meta-bar {
-    font-size: 0.82em;
-    gap: 8px;
-    margin-bottom: 14px;
-    align-items: flex-start;
-  }
-  .thread-meta-bar .ops {
-    gap: 2px;
-    flex-wrap: wrap;
-  }
+  .thread-meta-bar { font-size: 0.82em; gap: 8px; margin-bottom: 14px; align-items: flex-start; }
+  .thread-meta-bar .ops { gap: 2px; flex-wrap: wrap; }
   .thread-meta-bar .ops a {
-    padding: 6px 10px;
-    min-height: 32px;
-    display: inline-flex;
-    align-items: center;
+    padding: 6px 10px; min-height: 32px;
+    display: inline-flex; align-items: center;
   }
 
-  /* ---------- 引用块 ---------- */
-  blockquote.q {
-    padding: 0.6em 0.95em;
-    margin: 0.85em 0;
-  }
+  blockquote.q { padding: 0.6em 0.95em; margin: 0.85em 0; }
 
-  /* ---------- 视频描述块 ---------- */
-  .video-desc {
-    padding: 0.9em 1em;
-    font-size: 0.92em;
-    line-height: 1.85;
-  }
+  .video-desc { padding: 0.9em 1em; font-size: 0.92em; line-height: 1.85; }
   .video-desc .head { font-size: 0.74em; }
 
-  /* ---------- 实时回复 feed（关键） ---------- */
   .realtime-feed { font-size: 0.78em; }
-  .realtime-feed .header {
-    font-size: 0.82em;
-    padding: 0.55em 0.9em;
-    letter-spacing: 0.04em;
-    line-height: 1.6;
-  }
-  .realtime-feed .item {
-    padding: 0.65em 0.9em;
-    flex-wrap: wrap;       /* 关键：允许换行 */
-    gap: 0.3em 0.7em;
-  }
+  .realtime-feed .header { font-size: 0.82em; padding: 0.55em 0.9em; letter-spacing: 0.04em; line-height: 1.6; }
+  .realtime-feed .item { padding: 0.65em 0.9em; flex-wrap: wrap; gap: 0.3em 0.7em; }
   .realtime-feed .item .ts { font-size: 0.82em; }
   .realtime-feed .item .who { font-size: 0.84em; }
-  .realtime-feed .item .text {
-    flex: 1 1 100%;        /* 关键：正文换到下一行 */
-    margin-top: 3px;
-    line-height: 1.6;
-  }
-  .realtime-feed .more {
-    padding: 0.65em 0.9em;
-    font-size: 0.82em;
-  }
+  .realtime-feed .item .text { flex: 1 1 100%; margin-top: 3px; line-height: 1.6; }
+  .realtime-feed .more { padding: 0.65em 0.9em; font-size: 0.82em; }
 
-  /* ---------- 系统通知 ---------- */
   .system-notice { padding: 1.2em 1em; }
-  .system-stats {
-    padding: 0.75em 0.85em;
-    font-size: 0.8em;
+  .system-stats { padding: 0.75em 0.85em; font-size: 0.8em; }
+  .system-stats div { margin: 0.35em 0; line-height: 1.7; }
+  .system-warning { font-size: 0.92em; padding: 0.8em 0.95em; line-height: 1.7; }
+
+  /* 中央黑洞 · 移动端缩放 */
+  .central-dot-wrap {
+    min-height: 84px;
+    margin: 2em 0 0.8em;
   }
-  .system-stats div {
-    margin: 0.35em 0;
-    line-height: 1.7;
-  }
-  .system-warning {
-    font-size: 0.92em;
-    padding: 0.8em 0.95em;
-    line-height: 1.7;
+  .central-dot.grown {
+    width: 64px;
+    height: 64px;
+    box-shadow:
+      0 0 0 1px rgba(122, 112, 96, 0.35),
+      0 8px 28px -4px rgba(20, 14, 8, 0.42),
+      inset 11px 14px 22px rgba(0, 0, 0, 0.95),
+      inset 0 0 44px rgba(0, 0, 0, 0.88),
+      inset -4px -5px 14px rgba(86, 76, 62, 0.18);
   }
 
-  /* ---------- 帖内翻页 ---------- */
-  .thread-nav {
-    margin-top: 28px;
-    padding: 12px 0;
-    gap: 6px;
-  }
-  .thread-nav .nav-link {
-    padding: 8px 4px;
-    min-height: 44px;
-    font-size: 0.86em;
-  }
+  .thread-nav { margin-top: 28px; padding: 12px 0; gap: 6px; }
+  .thread-nav .nav-link { padding: 8px 4px; min-height: 44px; font-size: 0.86em; }
 
-  /* ---------- 回复框 ---------- */
-  .reply-box {
-    padding: 0.95em 1em;
-    margin-top: 20px;
-  }
-  .reply-box .pseudo-input {
-    min-height: 52px;
-    padding: 0.85em 0.95em;
-  }
-  .reply-box .actions {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 7px;
-  }
-  .reply-box .actions button {
-    padding: 9px 14px;
-    width: 100%;
-    min-height: 38px;
-  }
+  .reply-box { padding: 0.95em 1em; margin-top: 20px; }
+  .reply-box .pseudo-input { min-height: 52px; padding: 0.85em 0.95em; }
+  .reply-box .actions { flex-direction: column; align-items: stretch; gap: 7px; }
+  .reply-box .actions button { padding: 9px 14px; width: 100%; min-height: 38px; }
   .reply-box .actions .hint { text-align: center; }
 
-  /* ---------- 分页 ---------- */
-  .pagination {
-    margin-top: 18px;
-    gap: 5px;
-  }
-  .pagination a,
-  .pagination span {
-    padding: 7px 13px;
-    min-width: 36px;
-    min-height: 36px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+  .pagination { margin-top: 18px; gap: 5px; }
+  .pagination a, .pagination span {
+    padding: 7px 13px; min-width: 36px; min-height: 36px;
+    display: inline-flex; align-items: center; justify-content: center;
   }
 
-  /* ---------- 锁帖条 / 审核块 ---------- */
-  .thread-locked-bar {
-    padding: 0.9em;
-    font-size: 0.88em;
-  }
+  .thread-locked-bar { padding: 0.9em; font-size: 0.88em; }
   .moderation-block {
-    padding: 1.1em 1em;
-    min-height: 56px;
-    font-size: 0.86em;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    letter-spacing: 0.04em;
+    padding: 1.1em 1em; min-height: 56px; font-size: 0.86em;
+    display: flex; align-items: center; justify-content: center; letter-spacing: 0.04em;
   }
 
-  /* ---------- 章节分隔 ---------- */
-  .thread-divider {
-    gap: 10px;
-    margin: 1.6em 0;
-  }
-  .thread-divider span {
-    font-size: 0.76em;
-    letter-spacing: 0.22em;
-  }
+  .thread-divider { gap: 10px; margin: 1.6em 0; }
+  .thread-divider span { font-size: 0.76em; letter-spacing: 0.22em; }
 
-  /* ---------- 页脚 ---------- */
-  footer.final {
-    margin-top: 40px;
-    padding: 22px 0 10px;
-  }
+  footer.final { margin-top: 40px; padding: 22px 0 10px; }
   footer.final .meta { font-size: 0.74em; }
 
-  /* ---------- 首页板块行 ---------- */
-  .section-group .group-head {
-    padding: 0.7em 1em;
-    font-size: 0.94em;
-  }
-  .board-row {
-    padding: 0.9em 1em;
-    column-gap: 10px;
-    row-gap: 6px;
-  }
-  .board-icon {
-    width: 38px; height: 38px;
-    font-size: 1em;
-    grid-row: 1 / 2;
-  }
-  .board-info .board-title {
-    font-size: 0.98em;
-    line-height: 1.45;
-  }
-  .board-info .board-desc {
-    font-size: 0.8em;
-    line-height: 1.55;
-    margin-top: 3px;
-  }
-  .board-info .board-tags {
-    font-size: 0.7em;
-    margin-top: 4px;
-  }
-  .board-stats {
-    text-align: left;       /* 关键：手机端改回左对齐 */
-    font-size: 0.76em;
-    line-height: 1.5;
-  }
-  .board-last {
-    font-size: 0.76em;
-    line-height: 1.5;
-  }
+  .section-group .group-head { padding: 0.7em 1em; font-size: 0.94em; }
+  .board-row { padding: 0.9em 1em; column-gap: 10px; row-gap: 6px; }
+  .board-icon { width: 38px; height: 38px; font-size: 1em; grid-row: 1 / 2; }
+  .board-info .board-title { font-size: 0.98em; line-height: 1.45; }
+  .board-info .board-desc { font-size: 0.8em; line-height: 1.55; margin-top: 3px; }
+  .board-info .board-tags { font-size: 0.7em; margin-top: 4px; }
+  .board-stats { text-align: left; font-size: 0.76em; line-height: 1.5; }
+  .board-last { font-size: 0.76em; line-height: 1.5; }
 
-  /* ---------- 角落小圆点（iOS 安全区 + 扩大触摸区） ---------- */
-  .corner-dot {
-    right: 14px;
-    bottom: calc(14px + env(safe-area-inset-bottom));
-  }
-  .corner-dot::before {
-    content: "";
-    position: absolute;
-    inset: -16px;            /* 扩大热区，但视觉点保持 6px */
-  }
+  .corner-dot { right: 14px; bottom: calc(14px + env(safe-area-inset-bottom)); }
+  .corner-dot::before { content: ""; position: absolute; inset: -16px; }
   .corner-tip {
-    right: 30px;
-    bottom: calc(10px + env(safe-area-inset-bottom));
-    max-width: calc(100vw - 56px);
-    font-size: 0.74em;
+    right: 30px; bottom: calc(10px + env(safe-area-inset-bottom));
+    max-width: calc(100vw - 56px); font-size: 0.74em;
   }
 }
 
 /* ============================================================
- * 极窄屏 ≤ 380px（小屏老款手机）
+ * 极窄屏 ≤ 380px
  * ============================================================ */
 @media (max-width: 380px) {
   body { font-size: 15.5px; }
-  .container {
-    padding: 14px 12px calc(48px + env(safe-area-inset-bottom));
-  }
+  .container { padding: 14px 12px calc(48px + env(safe-area-inset-bottom)); }
 
   .forum-mast .inner { padding: 9px 12px; gap: 8px; }
   .forum-mast .logo { width: 28px; height: 28px; font-size: 12px; }
-  .forum-mast .label { display: none; }      /* 极窄屏隐藏英文 LABEL */
+  .forum-mast .label { display: none; }
   .forum-mast .title { font-size: 13.5px; max-width: 52vw; }
   .user-area a { font-size: 11.5px; padding: 6px 3px; }
 
@@ -1637,10 +1536,13 @@ a, button, .moderation-block, .corner-dot {
 
   .realtime-feed { font-size: 0.74em; }
   .system-stats { font-size: 0.76em; padding: 0.65em 0.75em; }
+
+  /* 中央黑洞 · 极窄屏进一步缩 */
+  .central-dot.grown { width: 56px; height: 56px; }
 }
 
 /* ============================================================
- * 横屏小高度手机（不让 sticky header 吃掉太多视野）
+ * 横屏小高度手机
  * ============================================================ */
 @media (max-width: 900px) and (max-height: 480px) and (orientation: landscape) {
   .forum-mast .inner { padding: 6px 14px; }
@@ -1651,7 +1553,7 @@ a, button, .moderation-block, .corner-dot {
 }
 
 /* ============================================================
- * 高分屏（视网膜）下的微调
+ * 高分屏微调
  * ============================================================ */
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
   body { -webkit-font-smoothing: antialiased; }
