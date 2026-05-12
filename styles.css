@@ -1657,3 +1657,594 @@ a, button, .moderation-block, .corner-dot {
   body { -webkit-font-smoothing: antialiased; }
   .badge { letter-spacing: 0.035em; }
 }
+
+/* ============================================================
+ * ▼▼▼ 移动端优化追加段 v2 ▼▼▼
+ * 安全区·触摸热区·深色模式·横屏警告·阅读进度·全屏阅读
+ * ============================================================ */
+
+/* ---------- 顶/底安全区适配（刘海屏 / 灵动岛 / Home indicator） ---------- */
+.forum-mast {
+  padding-top: env(safe-area-inset-top);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+body {
+  /* iOS 全屏 / PWA 时给底部留出 home indicator 高度 */
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+.container {
+  padding-left: max(16px, env(safe-area-inset-left));
+  padding-right: max(16px, env(safe-area-inset-right));
+  padding-bottom: calc(64px + env(safe-area-inset-bottom));
+}
+
+/* ---------- 触摸热区全面 ≥ 44px ---------- */
+@media (hover: none) and (pointer: coarse) {
+  .main-nav a,
+  .user-area a,
+  .breadcrumb a,
+  .thread-meta-bar .ops a,
+  .board-toolbar .filters a,
+  .pagination a,
+  .pagination span,
+  .mention {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+  /* 列表项整行可点 */
+  .thread-row,
+  .board-row {
+    min-height: 64px;
+  }
+}
+
+/* ---------- 角落小圆点：扩大不可见触摸热区到 44×44 ---------- */
+.corner-dot::before {
+  content: "";
+  position: absolute;
+  inset: -19px;            /* 6px + 38px = 44px 总尺寸 */
+  border-radius: 50%;
+  background: transparent;
+  /* 注意：不要 pointer-events: none，让 ::before 接收点击 */
+}
+
+/* ---------- 阅读进度恢复提示条 ---------- */
+.resume-toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(74px + env(safe-area-inset-bottom));
+  transform: translateX(-50%) translateY(20px);
+  background: rgba(44, 40, 37, 0.94);
+  color: #f5f1ea;
+  padding: 10px 16px;
+  border-radius: 22px;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 12.5px;
+  letter-spacing: 0.04em;
+  z-index: 60;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s, transform 0.5s cubic-bezier(0.2, 0.7, 0.3, 1);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  max-width: calc(100vw - 32px);
+  white-space: nowrap;
+}
+.resume-toast.show {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+.resume-toast button {
+  background: transparent;
+  border: 1px solid rgba(245, 241, 234, 0.3);
+  color: #f5f1ea;
+  padding: 3px 10px;
+  margin-left: 10px;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 11.5px;
+  cursor: pointer;
+  min-height: 28px;
+}
+.resume-toast button:active { background: rgba(245, 241, 234, 0.1); }
+
+/* ---------- 全屏阅读模式（隐藏头部，纯文字沉浸） ---------- */
+body.immersive .forum-mast {
+  transform: translateY(-100%);
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+body:not(.immersive) .forum-mast {
+  transform: translateY(0);
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 浮动"沉浸/退出沉浸"按钮 */
+.immersive-toggle {
+  position: fixed;
+  left: 14px;
+  bottom: calc(14px + env(safe-area-inset-bottom));
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(253, 250, 243, 0.85);
+  border: 1px solid #d8d0bd;
+  color: #5a554d;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  z-index: 49;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.4s, transform 0.4s, background 0.25s;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+}
+.immersive-toggle.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.immersive-toggle:active {
+  background: rgba(232, 220, 195, 0.9);
+}
+@media (min-width: 769px) {
+  .immersive-toggle { display: none; } /* 桌面端不显示 */
+}
+
+/* ---------- 横屏体验提示（竖屏沉浸感强化） ---------- */
+.orientation-hint {
+  position: fixed;
+  inset: 0;
+  background: #f5f1ea;
+  z-index: 9000;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  text-align: center;
+  font-family: "Noto Serif SC", serif;
+  color: #2c2825;
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+.orientation-hint.show { display: flex; opacity: 1; }
+.orientation-hint .icon {
+  width: 48px;
+  height: 80px;
+  border: 2px solid #2c2825;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  position: relative;
+  animation: rotate-hint 2.6s ease-in-out infinite;
+}
+.orientation-hint .icon::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 6px;
+  transform: translateX(-50%);
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #2c2825;
+}
+@keyframes rotate-hint {
+  0%, 30% { transform: rotate(90deg); }
+  50%, 100% { transform: rotate(0deg); }
+}
+.orientation-hint .text {
+  font-size: 1.05em;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+.orientation-hint .sub {
+  font-family: "Noto Sans SC", sans-serif;
+  font-size: 0.86em;
+  color: #8a8278;
+  letter-spacing: 0.04em;
+  line-height: 1.8;
+  max-width: 280px;
+}
+.orientation-hint .sub em {
+  font-style: italic;
+  color: #6b665e;
+  display: block;
+  margin-top: 6px;
+  font-size: 0.92em;
+}
+
+/* 仅手机横屏才显示提示 */
+@media (max-width: 900px) and (orientation: landscape) and (max-height: 500px) {
+  body:not(.allow-landscape) .orientation-hint { display: flex; opacity: 1; }
+  body:not(.allow-landscape) .container,
+  body:not(.allow-landscape) .forum-mast { filter: blur(2px); }
+}
+
+/* ---------- 阅读字体在手机端进一步优化 ---------- */
+@media (max-width: 640px) {
+  body {
+    font-size: 16.5px;
+    line-height: 1.88;
+    letter-spacing: 0.015em;
+  }
+  .post-body {
+    font-size: 1em;
+    line-height: 1.92;
+  }
+  .post-body p {
+    margin: 0.7em 0;
+  }
+  .post-body strong {
+    font-weight: 600;
+    /* 加粗时增加可读性的微调 */
+    color: #1a1815;
+  }
+}
+
+/* ---------- 长按反馈（不打断浏览） ---------- */
+.long-press-feedback {
+  position: relative;
+}
+.long-press-active {
+  animation: long-press-pulse 0.4s ease;
+}
+@keyframes long-press-pulse {
+  0% { background: transparent; }
+  50% { background: rgba(184, 151, 90, 0.14); }
+  100% { background: transparent; }
+}
+
+/* ---------- 图片：禁止默认蓝色拖拽高亮，允许长按保存 ---------- */
+.post-body img,
+.post-images img {
+  -webkit-touch-callout: default; /* 允许长按弹出"保存图片" */
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+/* ---------- 极轻微的"页面呼吸"动画（增加氛围） ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  body::before {
+    animation: page-breathe 14s ease-in-out infinite;
+  }
+}
+@keyframes page-breathe {
+  0%, 100% {
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(184,151,90,0.025), transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba(184,151,90,0.02), transparent 50%);
+  }
+  50% {
+    background-image:
+      radial-gradient(circle at 22% 32%, rgba(184,151,90,0.045), transparent 52%),
+      radial-gradient(circle at 78% 68%, rgba(184,151,90,0.04), transparent 52%);
+  }
+}
+
+/* ---------- 设备倾斜引起的极微视差（由 JS 控制） ---------- */
+.container, .forum-mast {
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+}
+
+/* ============================================================
+ * 深色模式（自动跟随系统）—— 维持"夜里读旧帖子"的氛围
+ * 用户也可手动切换：body.dark-mode / body.light-mode
+ * ============================================================ */
+@media (prefers-color-scheme: dark) {
+  body:not(.light-mode) {
+    background: #15130f;
+    color: #c4baa0;
+  }
+  body:not(.light-mode) body::before,
+  body:not(.light-mode)::before {
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(184,151,90,0.04), transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba(184,151,90,0.03), transparent 50%);
+  }
+
+  body:not(.light-mode) .forum-mast {
+    background: rgba(21, 19, 15, 0.94);
+    border-bottom-color: #2a2620;
+  }
+  body:not(.light-mode) .forum-mast .logo {
+    background: #c4baa0;
+    color: #15130f;
+  }
+  body:not(.light-mode) .forum-mast .label { color: #6b665e; }
+  body:not(.light-mode) .forum-mast .title { color: #d8d0bd; }
+  body:not(.light-mode) .main-nav a { color: #8a8278; }
+  body:not(.light-mode) .main-nav a:hover { color: #d8d0bd; background: rgba(184, 151, 90, 0.08); }
+  body:not(.light-mode) .main-nav a.active { color: #c9a96e; }
+  body:not(.light-mode) .user-area a { color: #8a8278; }
+
+  body:not(.light-mode) .breadcrumb,
+  body:not(.light-mode) .breadcrumb a { color: #6b665e; }
+  body:not(.light-mode) .breadcrumb .current { color: #8a8278; }
+  body:not(.light-mode) .breadcrumb .sep { color: #3a352f; }
+
+  body:not(.light-mode) .forum-header h1 { color: #d8d0bd; }
+  body:not(.light-mode) .forum-header .sub { color: #8a8278; }
+  body:not(.light-mode) .forum-header .archive-tag {
+    background: #1f1c17;
+    color: #8a8278;
+    border-color: #3a352f;
+  }
+
+  body:not(.light-mode) .top-disclaimer {
+    background: #1c1914;
+    border-color: #2a2620;
+    border-left-color: #5a554d;
+    color: #8a8278;
+  }
+  body:not(.light-mode) .top-disclaimer .last-line { color: #6b665e; }
+  body:not(.light-mode) .top-disclaimer .last-line:hover { color: #c4baa0; }
+
+  body:not(.light-mode) .thread-card,
+  body:not(.light-mode) .section-group,
+  body:not(.light-mode) .thread-list,
+  body:not(.light-mode) .toc,
+  body:not(.light-mode) .site-notice,
+  body:not(.light-mode) .board-intro,
+  body:not(.light-mode) .reply-box {
+    background: #1c1914;
+    border-color: #2a2620;
+  }
+  body:not(.light-mode) .thread-head,
+  body:not(.light-mode) .section-group .group-head,
+  body:not(.light-mode) .thread-list .list-head,
+  body:not(.light-mode) .toc-head {
+    background: linear-gradient(180deg, #221e18, #1a1713);
+    border-bottom-color: #2a2620;
+  }
+  body:not(.light-mode) .thread-head h2,
+  body:not(.light-mode) .section-group .group-head,
+  body:not(.light-mode) .toc-head { color: #d8d0bd; }
+
+  body:not(.light-mode) .reply { border-top-color: #2a2620; }
+  body:not(.light-mode) .reply:hover { background: rgba(184, 151, 90, 0.04); }
+  body:not(.light-mode) .username { color: #d8d0bd; }
+  body:not(.light-mode) .username.is-system { color: #c9a96e; }
+  body:not(.light-mode) .timestamp,
+  body:not(.light-mode) .floor-num { color: #6b665e; }
+
+  body:not(.light-mode) strong { color: #f5f1ea; }
+  body:not(.light-mode) em { color: #8a8278; }
+  body:not(.light-mode) del { color: #5a554d; }
+
+  body:not(.light-mode) blockquote.q {
+    background: rgba(184, 151, 90, 0.06);
+    border-left-color: #5a554d;
+    color: #a39a8a;
+  }
+
+  body:not(.light-mode) .img-placeholder {
+    background: #1f1c17;
+    border-color: #3a352f;
+    color: #6b665e;
+  }
+
+  body:not(.light-mode) .video-desc {
+    background: #1f1c17;
+    border-color: #3a352f;
+    color: #a39a8a;
+  }
+  body:not(.light-mode) .video-desc .head {
+    color: #6b665e;
+    border-bottom-color: #3a352f;
+  }
+
+  body:not(.light-mode) .system-notice {
+    background: linear-gradient(180deg, #1c1914, #15130f);
+    border-color: #3a352f;
+  }
+  body:not(.light-mode) .system-stats {
+    background: rgba(184, 151, 90, 0.06);
+    border-left-color: #b8975a;
+    color: #a39a8a;
+  }
+  body:not(.light-mode) .system-warning {
+    color: #d49a78;
+    background: rgba(196, 123, 84, 0.08);
+    border-color: #8a4a3a;
+  }
+  body:not(.light-mode) .central-dot { background: #d8d0bd; }
+
+  body:not(.light-mode) .thread-locked-bar,
+  body:not(.light-mode) .moderation-block {
+    background: #1f1c17;
+    border-color: #3a352f;
+    color: #6b665e;
+  }
+  body:not(.light-mode) .moderation-block:hover {
+    background: #2a2620;
+    color: #a39a8a;
+  }
+
+  body:not(.light-mode) .narrator {
+    color: #6b665e;
+    background: rgba(184, 151, 90, 0.03);
+    border-color: #3a352f;
+  }
+
+  body:not(.light-mode) .badge-top { background: #2a1f1a; color: #d49a78; border-color: #5a3a2a; }
+  body:not(.light-mode) .badge-fine { background: #221e18; color: #c9a96e; border-color: #3a352f; }
+  body:not(.light-mode) .badge-locked { background: #1f1c17; color: #8a8278; border-color: #3a352f; }
+  body:not(.light-mode) .badge-hot { background: #2a1c17; color: #d4795a; border-color: #5a3a2a; }
+  body:not(.light-mode) .badge-verified { background: #1a2028; color: #8aa8c0; border-color: #2a3a4a; }
+
+  body:not(.light-mode) .thread-row,
+  body:not(.light-mode) .board-row { border-top-color: #2a2620; }
+  body:not(.light-mode) .thread-row:hover,
+  body:not(.light-mode) .board-row:hover { background: rgba(184, 151, 90, 0.04); }
+  body:not(.light-mode) .thread-row .tr-title,
+  body:not(.light-mode) .board-info .board-title { color: #d8d0bd; }
+  body:not(.light-mode) .thread-row .tr-stat .n,
+  body:not(.light-mode) .board-stats .num,
+  body:not(.light-mode) .board-last .post,
+  body:not(.light-mode) .thread-row .tr-last .who { color: #a39a8a; }
+  body:not(.light-mode) .thread-row .tr-author,
+  body:not(.light-mode) .thread-row .tr-last,
+  body:not(.light-mode) .thread-row .tr-stat,
+  body:not(.light-mode) .board-info .board-desc,
+  body:not(.light-mode) .board-info .board-tags,
+  body:not(.light-mode) .board-last { color: #6b665e; }
+
+  body:not(.light-mode) .board-toolbar .btn { background: #c4baa0; color: #15130f; }
+  body:not(.light-mode) .board-toolbar .btn:hover { background: #d8d0bd; }
+  body:not(.light-mode) .board-toolbar .filters a { color: #6b665e; }
+  body:not(.light-mode) .board-toolbar .filters a.active { color: #c9a96e; background: rgba(184, 151, 90, 0.1); }
+
+  body:not(.light-mode) .pagination a,
+  body:not(.light-mode) .pagination span {
+    background: #1c1914;
+    border-color: #2a2620;
+    color: #8a8278;
+  }
+  body:not(.light-mode) .pagination .current {
+    background: #c4baa0;
+    color: #15130f;
+    border-color: #c4baa0;
+  }
+  body:not(.light-mode) .pagination .disabled { color: #3a352f; }
+
+  body:not(.light-mode) .thread-nav { border-color: #2a2620; }
+  body:not(.light-mode) .thread-nav .nav-link { color: #8a8278; }
+  body:not(.light-mode) .thread-nav .nav-link .title { color: #d8d0bd; }
+  body:not(.light-mode) .thread-nav .nav-link.up .title { color: #8a8278; }
+
+  body:not(.light-mode) footer.final {
+    border-top-color: #2a2620;
+  }
+  body:not(.light-mode) footer.final .meta { color: #6b665e; }
+
+  body:not(.light-mode) .reply-box .lbl { color: #d8d0bd; }
+  body:not(.light-mode) .reply-box .pseudo-input {
+    background: #15130f;
+    border-color: #3a352f;
+    color: #6b665e;
+  }
+  body:not(.light-mode) .reply-box .actions button {
+    background: #5a554d;
+    color: #d8d0bd;
+  }
+
+  body:not(.light-mode) .immersive-toggle {
+    background: rgba(28, 25, 20, 0.85);
+    border-color: #3a352f;
+    color: #a39a8a;
+  }
+  body:not(.light-mode) .immersive-toggle:active {
+    background: rgba(58, 53, 47, 0.9);
+  }
+
+  body:not(.light-mode) .resume-toast {
+    background: rgba(28, 25, 20, 0.96);
+    color: #d8d0bd;
+  }
+
+  body:not(.light-mode) .orientation-hint { background: #15130f; color: #d8d0bd; }
+  body:not(.light-mode) .orientation-hint .icon { border-color: #d8d0bd; }
+  body:not(.light-mode) .orientation-hint .icon::after { background: #d8d0bd; }
+  body:not(.light-mode) .orientation-hint .sub { color: #6b665e; }
+
+  body:not(.light-mode) .corner-dot { background: #d8d0bd; }
+  body:not(.light-mode) .corner-tip { background: #d8d0bd; color: #15130f; }
+
+  body:not(.light-mode) .progress-bar {
+    background: linear-gradient(to right, #c9a96e, #d4b88a);
+  }
+
+  /* 深色模式下，恶意 ID 圆圈更"灼眼" */
+  body:not(.light-mode) .id-circle {
+    color: #d8d0bd;
+    text-shadow: 0 0 6px rgba(216, 208, 189, 0.25);
+  }
+
+  /* 深色模式下"未通过审核"块 hover 加深 */
+  body:not(.light-mode) .hidden-reply .reply { background: transparent; }
+}
+
+/* 用户手动切换的深色模式（覆盖 prefers-color-scheme:light 的设备） */
+body.dark-mode {
+  background: #15130f;
+  color: #c4baa0;
+}
+body.dark-mode .forum-mast { background: rgba(21, 19, 15, 0.94); border-bottom-color: #2a2620; }
+body.dark-mode .forum-mast .logo { background: #c4baa0; color: #15130f; }
+body.dark-mode .forum-mast .title { color: #d8d0bd; }
+body.dark-mode .forum-mast .label,
+body.dark-mode .main-nav a,
+body.dark-mode .user-area a,
+body.dark-mode .breadcrumb,
+body.dark-mode .breadcrumb a { color: #8a8278; }
+body.dark-mode .forum-header h1,
+body.dark-mode .thread-head h2,
+body.dark-mode .username,
+body.dark-mode .thread-row .tr-title,
+body.dark-mode .board-info .board-title { color: #d8d0bd; }
+body.dark-mode strong { color: #f5f1ea; }
+body.dark-mode .thread-card,
+body.dark-mode .section-group,
+body.dark-mode .thread-list,
+body.dark-mode .site-notice,
+body.dark-mode .board-intro,
+body.dark-mode .reply-box,
+body.dark-mode .top-disclaimer {
+  background: #1c1914;
+  border-color: #2a2620;
+}
+body.dark-mode .thread-head,
+body.dark-mode .section-group .group-head,
+body.dark-mode .thread-list .list-head {
+  background: linear-gradient(180deg, #221e18, #1a1713);
+  border-bottom-color: #2a2620;
+}
+body.dark-mode .reply { border-top-color: #2a2620; }
+body.dark-mode blockquote.q {
+  background: rgba(184, 151, 90, 0.06);
+  border-left-color: #5a554d;
+  color: #a39a8a;
+}
+
+/* ---------- 用户启用动效偏好关闭后，全部呼吸停掉 ---------- */
+@media (prefers-reduced-motion: reduce) {
+  body::before, .central-dot, .avatar-mod::after,
+  blockquote.q, .id-circle, .corner-dot::after {
+    animation: none !important;
+  }
+}
+
+/* ---------- 列表行更易点（手机） ---------- */
+@media (max-width: 640px) {
+  .thread-row { padding: 1.1em 1em; }
+  .board-row { padding: 1.05em 1em; }
+  .reply { padding-top: 1.1em; padding-bottom: 1.1em; }
+  .reply-head { gap: 0.7em; }
+  .avatar { width: 36px; height: 36px; font-size: 0.95em; }
+}
+
+/* ---------- 加大 corner-tip 字号方便看清 ---------- */
+@media (max-width: 640px) {
+  .corner-tip {
+    font-size: 12px;
+    padding: 9px 13px;
+  }
+}
+
+/* ---------- 帖子链接点击时的微弱描边 ---------- */
+@media (hover: none) {
+  .tr-title:active,
+  .board-title:active {
+    color: #b85a3c;
+  }
+}
