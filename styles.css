@@ -1661,3 +1661,156 @@ a, button, .moderation-block, .corner-dot {
   body { -webkit-font-smoothing: antialiased; }
   .badge { letter-spacing: 0.035em; }
 }
+
+/* ============================================================
+ * 新增：实时回复打字机效果
+ * ============================================================ */
+.realtime-feed .item.tw-hidden { display: none; }
+.realtime-feed .more.tw-hidden { display: none; }
+
+/* 正在打字的文本末尾光标 */
+.realtime-feed .item .text.tw-typing::after {
+  content: "▋";
+  display: inline-block;
+  color: #c9a96e;
+  margin-left: 2px;
+  animation: tw-blink 0.85s steps(2, end) infinite;
+  font-weight: 500;
+}
+@keyframes tw-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+/* item 出现时的轻微淡入 */
+.realtime-feed .item {
+  animation: tw-fadein 0.22s ease-out;
+}
+@keyframes tw-fadein {
+  from { opacity: 0; transform: translateY(2px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+ * 新增：可点击放大的黑洞
+ * ============================================================ */
+.growable-hole {
+  display: inline-block;
+  vertical-align: middle;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 32%, #2a2622 0%, #14110f 22%, #050403 55%, #000 78%);
+  box-shadow:
+    inset 0 6px 14px rgba(0, 0, 0, 0.95),
+    inset 0 -2px 6px rgba(255, 255, 255, 0.03),
+    0 1px 3px rgba(0, 0, 0, 0.35),
+    0 0 28px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  transition:
+    width 0.55s cubic-bezier(0.34, 0, 0.2, 1),
+    height 0.55s cubic-bezier(0.34, 0, 0.2, 1),
+    box-shadow 0.6s ease;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
+}
+.growable-hole:hover {
+  box-shadow:
+    inset 0 6px 14px rgba(0, 0, 0, 0.95),
+    inset 0 -2px 6px rgba(255, 255, 255, 0.03),
+    0 1px 3px rgba(0, 0, 0, 0.45),
+    0 0 38px rgba(0, 0, 0, 0.45);
+}
+
+/* 用作"独居小王视频中的洞"的内联展示 */
+.hole-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6em;
+  margin: 1em 0 0.4em;
+  padding: 1.4em 0 0.4em;
+}
+.hole-block .hint {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.78em;
+  color: #8a8278;
+  letter-spacing: 0.06em;
+  font-style: italic;
+}
+
+/* 中等大小后脱离文档流，固定到屏幕中央 */
+.growable-hole.hole-fixed {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9998;
+  box-shadow:
+    inset 0 12px 28px rgba(0, 0, 0, 0.98),
+    inset 0 -3px 10px rgba(255, 255, 255, 0.025),
+    0 0 80px rgba(0, 0, 0, 0.6);
+}
+
+/* 已吞没整个视口 */
+.growable-hole.hole-fullscreen {
+  z-index: 9999;
+  box-shadow: none;
+  background: #000;
+}
+
+/* 当全屏黑洞出现，淡出其余 UI */
+body.engulfed {
+  background: #000;
+  transition: background 1.4s ease;
+}
+body.engulfed .forum-mast,
+body.engulfed .progress-bar,
+body.engulfed .corner-tip,
+body.engulfed .container {
+  opacity: 0.05;
+  transition: opacity 1.6s ease;
+  pointer-events: none;
+}
+/* 不让正在显示的黑洞自己也被淡出 */
+body.engulfed .growable-hole.hole-fullscreen,
+body.engulfed .corner-dot.fullscreen {
+  opacity: 1 !important;
+  pointer-events: auto;
+}
+
+/* 注：thread-9 的 centralDot 原本有 4s 缓慢入场过渡，
+   故不在 CSS 层强行覆盖，转由点击时通过内联样式切换更灵敏的过渡 */
+
+/* ============================================================
+ * 新增：角落小圆点 —— 解除大小上限，让它能吞屏
+ * ============================================================ */
+.corner-dot {
+  /* 覆盖原本的 width/height 0.6s 短过渡，调成更顺滑的曲线 */
+  transition:
+    opacity 1.6s ease,
+    transform 0.4s ease,
+    width 0.7s cubic-bezier(0.34, 0, 0.2, 1),
+    height 0.7s cubic-bezier(0.34, 0, 0.2, 1),
+    right 0.7s ease,
+    bottom 0.7s ease,
+    border-radius 1.2s ease;
+}
+.corner-dot.engulfing {
+  z-index: 9998;
+  box-shadow:
+    inset 0 10px 26px rgba(0, 0, 0, 0.98),
+    0 0 60px rgba(0, 0, 0, 0.5);
+}
+.corner-dot.fullscreen {
+  z-index: 9999;
+  box-shadow: none;
+  background: #000;
+}
+/* 当 corner-dot 自己达到全屏时，它也算"已吞没"，让 body 同样淡出周围 */
+.corner-dot.fullscreen ~ * { /* 占位，不影响 */ }
+
+/* 小屏下黑洞触摸区也保持合适 */
+@media (max-width: 640px) {
+  .hole-block { padding: 1em 0 0.2em; }
+}
